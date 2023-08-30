@@ -10,8 +10,8 @@ app.config['JSON_SORT_KEYS'] = False
 db_config = {
     "host": "localhost",
     "database": "taipei_day_trip",
-    "user": "millie",
-    "password": "milliepass",
+    "user": "root",
+    "password": "rootpass",
 }
 
 connection_pool = MySQLConnectionPool(
