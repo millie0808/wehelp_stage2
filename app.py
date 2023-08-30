@@ -116,29 +116,22 @@ def thankyou():
 def api_attractions():
 	page_str = request.args.get("page")
 	keyword = request.args.get("keyword", None)
-	one_page = 12
+	one_page = 12 # 一頁放12個
 	if page_str:
 		page = int(page_str)
 		if page < 0:
 			return api_error("無此頁，頁數小於0", 500)
 		try: 
 			result = handle_api_attractions(one_page, page, keyword)
-			# 計算最大頁數
-			if keyword:
-				max_page = len(result)/one_page
-			else:
-				num_of_attractions = count_attraction_rows()
-				max_page = num_of_attractions/one_page
-
-			if page > max_page:
-				return api_error("無此頁，頁數過大", 500)
-			else:
+			if len(result) > 0:
 				for attraction in result:
 					attraction["images"] = attraction["images"].split(",")
 				return jsonify({
 					"nextPage": page+1,
 					"data": result
 				}), utf8
+			else:
+				return api_error("無此頁，頁數過大", 500)
 		except:
 			return api_error("伺服器內部錯誤", 500)
 	else:
