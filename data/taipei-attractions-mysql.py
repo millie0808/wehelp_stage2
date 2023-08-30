@@ -4,9 +4,8 @@ import re
 
 db_config = {
     "host": "localhost",
-    "database": "website",
-    "user": "root",
-    "password": "rootpass"
+    "user": "millie",
+    "password": "milliepass"
 }
 
 connection = mysql.connector.connect(**db_config)
