@@ -21,9 +21,10 @@ connection_pool = MySQLConnectionPool(
 
 # MySQL Views: attraction_data
 
-# functions and variables
+# Global variables
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
 
+# Functions
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
 	connection = connection_pool.get_connection()
 	cursor = connection.cursor(dictionary=True)
@@ -41,11 +42,11 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=F
 		connection.close()
 		return result
 
-def api_error(message,code):
-	return make_response(jsonify({
+def api_error(message, code):
+	return jsonify({
 		"error": True,
 		"message": message
-	}), code, utf8)
+	}), code, utf8
 
 def count_attraction_rows():
 	sql_query = """
