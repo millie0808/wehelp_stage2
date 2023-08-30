@@ -21,10 +21,8 @@ connection_pool = MySQLConnectionPool(
 
 # MySQL Views: attraction_data
 
-
 # functions and variables
-
-utf8 = {"Content-Type": "charset=utf-8"}
+utf8 = {"Content-Type": "application/json; charset=utf-8"}
 
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
 	connection = connection_pool.get_connection()
