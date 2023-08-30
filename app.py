@@ -1,11 +1,10 @@
 from flask import *
 from mysql.connector.pooling import MySQLConnectionPool
 
-
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
-app.config['JSON_SORT_KEYS'] = False
+app.config["JSON_SORT_KEYS"] = False
 
 db_config = {
     "host": "localhost",
@@ -21,6 +20,11 @@ connection_pool = MySQLConnectionPool(
 )
 
 # MySQL Views: attraction_data
+
+
+# functions and variables
+
+utf8 = {"Content-Type": "charset=utf-8"}
 
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
 	connection = connection_pool.get_connection()
@@ -43,7 +47,7 @@ def api_error(message,code):
 	return make_response(jsonify({
 		"error": True,
 		"message": message
-	}), code)
+	}), code, utf8)
 
 def count_attraction_rows():
 	sql_query = """
@@ -96,7 +100,6 @@ def handle_api_mrts():
 	result = [station['name'] for station in query_result]
 	return result
 
-
 # Pages
 @app.route("/")
 def index():
@@ -136,7 +139,7 @@ def api_attractions():
 				return jsonify({
 					"nextPage": page+1,
 					"data": result
-				})
+				}), utf8
 		except:
 			return api_error("伺服器內部錯誤", 500)
 	else:
@@ -148,7 +151,7 @@ def api_attraction_attractionId(attractionId):
 		attraction = select_attraction_by_id(attractionId)
 		if attraction:
 			attraction["images"] = attraction["images"].split(",")
-			return jsonify({"data": attraction})
+			return jsonify({"data": attraction}), utf8
 		else:
 			return api_error("景點編號不正確", 400)
 	except:
@@ -158,7 +161,7 @@ def api_attraction_attractionId(attractionId):
 def api_mrts():
 	try:
 		result = handle_api_mrts()
-		return jsonify({"data": result})
+		return jsonify({"data": result}), utf8
 	except:
 		return api_error("伺服器內部錯誤", 500)
 
