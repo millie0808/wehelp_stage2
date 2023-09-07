@@ -2,15 +2,12 @@ const searchInput = document.querySelector(".guide__search-input");
 const attractionsGroup = document.querySelector(".main__attractions-group");
 const footer = document.querySelector(".footer");
 let isSearch = false;
-let isLoading = false;
+// let isLoading = false;
 let GLOBAL_nextPage = 0;
 let GLOBAL_keyword = '';
 
-
-
 function createAttractionElement(attractionsJSON){
     const attractionsList = attractionsJSON.data;
-    // const attractionsGroup = document.querySelector(".main__attractions-group");
     for(i=0;i<attractionsList.length;i++){
         let attractionContainer = document.createElement("div");
         let attractionImg = document.createElement("img");
@@ -68,7 +65,6 @@ function createNoResultElem(){
 }
 
 function deleteALLAttractionElement(){
-    // const attractionsGroup = document.querySelector(".main__attractions-group");
     const attractionContainers = attractionsGroup.querySelectorAll(".main__attraction-container");
     const attractionContainersArray = Array.from(attractionContainers);
     attractionContainersArray.forEach(function(attractionContainer){
@@ -98,7 +94,7 @@ function fetchAttractions(url){
         return response.json()
     }).then(function(attractionsJSON){
         createAttractionElement(attractionsJSON);
-        isLoading = false;
+        // isLoading = false;
     });
 }
 
@@ -137,12 +133,11 @@ fetch('/api/mrts').then(function(response){
 fetchAttractions('/api/attractions?page=0');
 
 // Load more
-
 const observer = new IntersectionObserver(entries => {    
     entries.forEach(entry => {
-        if (entry.isIntersecting && !isLoading) {
-            isLoading = true;
+        if (entry.isIntersecting) {
             // 如果加載指示符進入視口，執行加載下一頁的邏輯
+            // isLoading = true;
             if(GLOBAL_nextPage){
                 let url = '';
                 if(isSearch){
@@ -153,6 +148,9 @@ const observer = new IntersectionObserver(entries => {
                 }
                 fetchAttractions(url);
             }
+            else{
+                isSearch = false;
+            }
         }
     });
 });
@@ -160,49 +158,46 @@ observer.observe(footer);
 
 
 // List Bar Scroll
-
-    const listBarContainer = document.querySelector(".main__list-bar-container");
-    const listBarLeftButton = document.querySelector(".main__list-bar-left-btn");
-    const listBarRightButton = document.querySelector(".main__list-bar-right-btn");
-    let windowWidth = window.screen.width;
-    // 獲取當下視窗寬度
-    document.addEventListener("DOMContentLoaded", () => {
+const listBarContainer = document.querySelector(".main__list-bar-container");
+const listBarLeftButton = document.querySelector(".main__list-bar-left-btn");
+const listBarRightButton = document.querySelector(".main__list-bar-right-btn");
+let windowWidth = window.screen.width;
+// 獲取當下視窗寬度
+document.addEventListener("DOMContentLoaded", () => {
+    windowWidth = window.screen.width;
+    window.addEventListener("resize", () => {
         windowWidth = window.screen.width;
-        window.addEventListener("resize", () => {
-            windowWidth = window.screen.width;
-        });
     });
-    // 左滾動按鈕事件
-    listBarLeftButton.addEventListener("click", () => {
-        if(windowWidth > 1200){
-            scrollWidth = windowWidth*0.625 - 47*2;
-        }
-        else{
-            scrollWidth = windowWidth - 47*2;
-        }
-        listBarContainer.scrollLeft -= scrollWidth; // 滾動量
-    });
-    // 右滾動按鈕事件
-    listBarRightButton.addEventListener("click", () => {
-        if(windowWidth > 1200){
-            scrollWidth = windowWidth*0.625 - 47*2;
-        }
-        else{
-            scrollWidth = windowWidth - 47*2;
-        }
-        listBarContainer.scrollLeft += scrollWidth; // 滾動量
-    });
+});
+// 左滾動按鈕事件
+listBarLeftButton.addEventListener("click", () => {
+    if(windowWidth > 1200){
+        scrollWidth = windowWidth*0.625 - 47*2;
+    }
+    else{
+        scrollWidth = windowWidth - 47*2;
+    }
+    listBarContainer.scrollLeft -= scrollWidth; // 滾動量
+});
+// 右滾動按鈕事件
+listBarRightButton.addEventListener("click", () => {
+    if(windowWidth > 1200){
+        scrollWidth = windowWidth*0.625 - 47*2;
+    }
+    else{
+        scrollWidth = windowWidth - 47*2;
+    }
+    listBarContainer.scrollLeft += scrollWidth; // 滾動量
+});
 
 // Search input : Focus
-
-    searchInput.addEventListener("focus", () => {
-        if(searchInput.value === "輸入景點名稱查詢"){
-            searchInput.value = "";
-        }
-    });
+searchInput.addEventListener("focus", () => {
+    if(searchInput.value === "輸入景點名稱查詢"){
+        searchInput.value = "";
+    }
+});
 
 // Search input : Keyup enter   !!!!!!
-
 // searchInput.addEventListener("keyup", (event) => {
 //     if(event.key === "Enter" || event.keyCode === 13){
 //         searchForKeyword();
@@ -210,9 +205,8 @@ observer.observe(footer);
 // });
 
 // Search button
-
-    const searchButton = document.querySelector(".guide__search-btn");
-    searchButton.addEventListener("click", () => {
-        const inputValue = searchInput.value;
-        searchForKeyword(0, inputValue);
-    });
+const searchButton = document.querySelector(".guide__search-btn");
+searchButton.addEventListener("click", () => {
+    const inputValue = searchInput.value;
+    searchForKeyword(0, inputValue);
+});
