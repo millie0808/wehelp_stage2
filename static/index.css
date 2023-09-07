@@ -32,8 +32,6 @@ button{
     top: 0;
     z-index: 100;
 
-    /* position: relative; */
-
     display: flex;
     justify-content: center;
 }
@@ -41,14 +39,12 @@ button{
     width: 62.5%;
     height: 34px;
     
-    /* position: absolute; */
     display: flex;
     justify-content: space-between;
 }
 .header__title{
     width: 150px;
     height: 34px;
-    /* styleName: Header 2 - Bold 30(34); */
     color: var(--primary-color-cyan-70);
 
     display: flex;
@@ -58,8 +54,6 @@ button{
     max-width: 175px; 
     height: auto; 
     max-height: 34px; 
-    /* left: 1025px; */
-
 }
 .header__btn-container{
     width: auto; 
@@ -81,7 +75,6 @@ button{
     max-width: 64px;
     height: auto;
     max-height: 14px;
-    /* //styleName: Body - Med 16(13.3); */
     color: var(--secondary-color-gray-70);
 
     display: inline-block;  /* for w and h */
@@ -98,7 +91,6 @@ button{
     max-width: 71px;
     height: auto;
     max-height: 14px;
-    /* //styleName: Body - Med 16(13.3); */
     color: var(--secondary-color-gray-70);
 
     display: inline-block;   /* for w and h */
@@ -141,7 +133,6 @@ button{
 .guide__slogan-1{
     width: 100%;
     height: 41px;
-    /* styleName: Header 1 - Bold 28(24); */
     color: var(--secondary-color-gray-10);
 
     display: flex;
@@ -151,7 +142,6 @@ button{
     width: 100%;
     height: 22px;
     top: 56px;
-    /* typograpy Name Header 2 - Bold 30(34) */
     color: var(--secondary-color-gray-10);
 
     position: absolute;  /* for top */
@@ -182,8 +172,6 @@ button{
     box-shadow: 0px 0px 20px 0px #AABBCC;
  
     position: relative; /*  input and text 重疊 */
-
-
 }
 .guide__search-input{
     width: 100%;
@@ -203,8 +191,6 @@ button{
     width: 92.5%;
     height: 16px;
     top: 15px;
-    /* left: 15px; */
-    /* //styleName: Body - Bold 16(13.3); */
 
     position: absolute; /*  input and text 重疊 */
 }
@@ -224,16 +210,12 @@ button{
     width: 60px;
     height: 46px;
     
-    /* background: var(--primary-color-cyan-70); */
-    /* box-sizing: border-box; */
     position: absolute; /*  btn and icon 重疊 */
     z-index: 1;
 }
 .guide__search-btn-icon{
     width: 30px;
     height: 30px;
-    /* top: 8px; */
-    /* left: 15px; */
 
     position: absolute; /*  btn and icon 重疊 */
 }
@@ -263,10 +245,6 @@ button{
     display: flex;
 }
 .main__list-bar-left-container{
-    /* width: auto; */
-    /* max-width: 47px; */
-    /* height: auto; */
-    /* max-height: 50px; */
     width: 47px;
     height: 50px;
     padding: 9px 0px 9px 15px;
@@ -295,7 +273,6 @@ button{
 }
 .main__list-item{
     width: auto;
-    /* max-width: 110px; */
     height: auto;
     max-height: 24px;
     padding: 5px 15px 5px 15px;
@@ -307,19 +284,13 @@ button{
 }
 .main__list-item-text{
     width: auto;
-    /* max-width: 80px; */
     height: auto;
     max-height: 14px;
-    /* //styleName: Body - Med 16(13.3); */
     color: var(--secondary-color-gray-70);
 
     white-space: nowrap;
 }
 .main__list-bar-right-container{
-    /* width: auto;
-    max-width: 47px;
-    height: auto;
-    max-height: 50px; */
     padding: 9px 15px 9px 0px;
 
     width: 47px;
@@ -380,7 +351,6 @@ button{
     height: 40px;
     padding: 10px;
     flex-shrink: 0;
-    /* opacity: 0.6; */
     background: rgba(0, 0, 0, 0.6);
 
     position: absolute;
@@ -423,7 +393,6 @@ button{
     justify-content: center;
     flex-shrink: 0;
     color: var(--additional-color-white);
-
 }
 
 .main__attraction-info-mrt{
@@ -446,12 +415,9 @@ button{
     text-align: right;
 }
 
-
-
 .footer{
     width: 100%;
     height: 104px;
-    /* padding: 40px 843px 40px 843px; */
     background: var(--secondary-color-gray-50);
 
     display: flex;
@@ -472,7 +438,6 @@ button{
     width: 234px;
     height: 14px;
     top: 5px;
-    /* //styleName: Body - Bold 16(13.3); */
     color: var(--additional-color-white);
 
     position: absolute;
@@ -504,9 +469,6 @@ button{
 }
 
 @media (max-width:600px){
-    /* .main{
-        height: 5000px;
-    } */
     .main__attraction-container{
         width: 100%;
     }
@@ -544,6 +506,4 @@ button{
     font-weight: 500; /* Medium */
     line-height: 13px;
     letter-spacing: 0em;
-    /* figma複製有，但會造成文字換行 */
-    /* text-align: left; */
 }
