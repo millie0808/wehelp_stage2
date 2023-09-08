@@ -166,7 +166,7 @@ listBarLeftButton.addEventListener("click", () => {
     let windowWidth = window.innerWidth;
     let listBarCurrentLocation = listBarContainer.scrollLeft;
     if(windowWidth > 1200){
-        scrollWidth = windowWidth*0.625 - 47*3;
+        scrollWidth = 1200 - 47*3;
     }
     else{
         scrollWidth = windowWidth - 47*3;
@@ -182,7 +182,7 @@ listBarRightButton.addEventListener("click", () => {
     let windowWidth = window.innerWidth;
     let listBarCurrentLocation = listBarContainer.scrollLeft;
     if(windowWidth > 1200){
-        scrollWidth = windowWidth*0.625 - 47*3;
+        scrollWidth = 1200 - 47*3;
     }
     else{
         scrollWidth = windowWidth - 47*3;
