@@ -161,33 +161,37 @@ observer.observe(footer);
 const listBarContainer = document.querySelector(".main__list-bar-container");
 const listBarLeftButton = document.querySelector(".main__list-bar-left-btn");
 const listBarRightButton = document.querySelector(".main__list-bar-right-btn");
-let windowWidth = window.screen.width;
-// 獲取當下視窗寬度
-document.addEventListener("DOMContentLoaded", () => {
-    windowWidth = window.screen.width;
-    window.addEventListener("resize", () => {
-        windowWidth = window.screen.width;
-    });
-});
 // 左滾動按鈕事件
 listBarLeftButton.addEventListener("click", () => {
+    let windowWidth = window.screen.width;
+    let listBarCurrentLocation = listBarContainer.scrollLeft;
     if(windowWidth > 1200){
-        scrollWidth = windowWidth*0.625 - 47*2;
+        scrollWidth = windowWidth*0.625 - 47*3;
     }
     else{
-        scrollWidth = windowWidth - 47*2;
+        scrollWidth = windowWidth - 47*3;
     }
-    listBarContainer.scrollLeft -= scrollWidth; // 滾動量
+    let listBarTargetLocation = listBarCurrentLocation - scrollWidth;
+    listBarContainer.scrollTo({
+        left: listBarTargetLocation,
+        behavior: 'smooth'
+    });
 });
 // 右滾動按鈕事件
 listBarRightButton.addEventListener("click", () => {
+    let windowWidth = window.screen.width;
+    let listBarCurrentLocation = listBarContainer.scrollLeft;
     if(windowWidth > 1200){
-        scrollWidth = windowWidth*0.625 - 47*2;
+        scrollWidth = windowWidth*0.625 - 47*3;
     }
     else{
-        scrollWidth = windowWidth - 47*2;
+        scrollWidth = windowWidth - 47*3;
     }
-    listBarContainer.scrollLeft += scrollWidth; // 滾動量
+    let listBarTargetLocation = listBarCurrentLocation + scrollWidth;
+    listBarContainer.scrollTo({
+        left: listBarTargetLocation,
+        behavior: 'smooth'
+    });
 });
 
 // Search input : Focus
