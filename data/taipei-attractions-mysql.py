@@ -149,15 +149,12 @@ SELECT
     a.id, a.name, c.name AS category,
     a.description, a.address, a.transport,
     m.name AS mrt, a.lat, a.lng,
-    group_image.images AS images
+    GROUP_CONCAT(i.url) AS images
 FROM attraction a
 LEFT JOIN mrt m ON a.mrt_id = m.id
 LEFT JOIN category c ON a.cat_id = c.id
-LEFT JOIN (
-    SELECT i.attn_id AS attn_id, GROUP_CONCAT(i.url) AS images
-    FROM image i
-    GROUP BY i.attn_id
-) group_image ON a.id = group_image.attn_id
+LEFT JOIN image i ON a.id = i.attn_id 
+GROUP BY a.id;
 """
 execute_query(view_query)
 

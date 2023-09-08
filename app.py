@@ -5,6 +5,11 @@ app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config["JSON_SORT_KEYS"] = False
+app = Flask(
+    __name__,
+    static_folder = "static",
+    static_url_path = "/"
+)
 
 db_config = {
     "host": "localhost",
@@ -25,9 +30,11 @@ connection_pool = MySQLConnectionPool(
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
 
 # Functions
-def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
+def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False):
 	connection = connection_pool.get_connection()
 	cursor = connection.cursor(dictionary=True)
+	if group_concat:
+		cursor.execute('SET SESSION group_concat_max_len = 1000000;')
 	cursor.execute(query, params)
 	if commit:
 		connection.commit()
@@ -63,7 +70,7 @@ def select_attraction_by_id(attractionId):
 	FROM attraction_data
 	WHERE id = %s;
 	"""
-	query_result = execute_query(sql_query, (attractionId,), fetch_one=True)
+	query_result = execute_query(sql_query, (attractionId,), fetch_one=True, group_concat=True)
 	return query_result
 
 def handle_api_attractions(one_page, page, keyword):
@@ -75,7 +82,7 @@ def handle_api_attractions(one_page, page, keyword):
 		ORDER BY id
 		LIMIT %s, %s;
 		"""
-		query_result = execute_query(sql_query, (keyword, keyword, one_page*page, one_page), fetch_all=True)
+		query_result = execute_query(sql_query, (keyword, keyword, one_page*page, one_page+1), fetch_all=True, group_concat=True)
 		return query_result
 	else:
 		sql_query = """
@@ -84,7 +91,7 @@ def handle_api_attractions(one_page, page, keyword):
 		ORDER BY id
 		LIMIT %s, %s;
 		"""
-		query_result = execute_query(sql_query, (one_page*page, one_page), fetch_all=True)
+		query_result = execute_query(sql_query, (one_page*page, one_page+1), fetch_all=True, group_concat=True)
 		return query_result
 
 def handle_api_mrts():
@@ -118,22 +125,31 @@ def api_attractions():
 	keyword = request.args.get("keyword", None)
 	one_page = 12 # 一頁放12個
 	if page_str:
-		page = int(page_str)
-		if page < 0:
-			return api_error("無此頁，頁數小於0", 500)
-		try: 
-			result = handle_api_attractions(one_page, page, keyword)
-			if len(result) > 0:
-				for attraction in result:
-					attraction["images"] = attraction["images"].split(",")
-				return jsonify({
-					"nextPage": page+1,
-					"data": result
-				}), utf8
-			else:
-				return api_error("無此頁，頁數過大", 500)
+		try:
+			page = int(page_str)
+			if page < 0:
+				return api_error("無此頁，頁數小於0", 500)
+			try: 
+				result = handle_api_attractions(one_page, page, keyword)
+				if len(result) > 0:
+					for attraction in result:
+						attraction["images"] = attraction["images"].split(",")
+					if len(result) == 13: 
+						return jsonify({
+							"nextPage": page+1,
+							"data": result[:one_page]
+						}), utf8
+					else:
+						return jsonify({
+							"nextPage": None,
+							"data": result
+						}), utf8
+				else:
+					return api_error("無此頁，頁數過大", 500)
+			except:
+				return api_error("伺服器內部錯誤", 500)
 		except:
-			return api_error("伺服器內部錯誤", 500)
+			return api_error("無此頁，頁數需為整數", 500)
 	else:
 		return api_error("請提供頁數", 500)
 
