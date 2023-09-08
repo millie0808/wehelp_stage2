@@ -163,7 +163,7 @@ const listBarLeftButton = document.querySelector(".main__list-bar-left-btn");
 const listBarRightButton = document.querySelector(".main__list-bar-right-btn");
 // 左滾動按鈕事件
 listBarLeftButton.addEventListener("click", () => {
-    let windowWidth = window.screen.width;
+    let windowWidth = window.innerWidth;
     let listBarCurrentLocation = listBarContainer.scrollLeft;
     if(windowWidth > 1200){
         scrollWidth = windowWidth*0.625 - 47*3;
@@ -179,7 +179,7 @@ listBarLeftButton.addEventListener("click", () => {
 });
 // 右滾動按鈕事件
 listBarRightButton.addEventListener("click", () => {
-    let windowWidth = window.screen.width;
+    let windowWidth = window.innerWidth;
     let listBarCurrentLocation = listBarContainer.scrollLeft;
     if(windowWidth > 1200){
         scrollWidth = windowWidth*0.625 - 47*3;
