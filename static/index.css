@@ -4,6 +4,7 @@ body{
 }
 input{
     border: 0;
+    margin: 0;
 }
 button{
     border: 0;
@@ -251,7 +252,7 @@ button{
     
     box-sizing: border-box;
 }
-.main__list-bar-left-btn, .main__list-bar-right-btn, .main__list-bar-btn-img{
+.left-arrow-btn, .right-arrow-btn, .arrow-img{
     width: 32px;
     height: 32px;
 }
@@ -330,6 +331,7 @@ button{
     position: relative;
 
     overflow: hidden;
+    cursor: pointer;
 }
 .no_result{
     width: 100%;
@@ -340,6 +342,7 @@ button{
 
     flex-direction: row;
     align-items: center;
+    cursor: default;
 }
 .main__attraction-img{
     width: 100%;
@@ -493,6 +496,27 @@ button{
     letter-spacing: 0em;
     text-align: left;
 }
+.header3{
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px; /* 100% */
+}
+.button_reg{
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px; /* 84.211% */
+}
+.content_reg{
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
 .body_bold{
     font-family: "Noto Sans TC", sans-serif;
     font-size: 16px;
@@ -504,6 +528,7 @@ button{
 .body_med{
     font-family: "Noto Sans TC", sans-serif;
     font-size: 16px;
+    font-style: normal;
     font-weight: 500; /* Medium */
     line-height: 13px;
     letter-spacing: 0em;
