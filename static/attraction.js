@@ -1,6 +1,6 @@
 const pathname = window.location.pathname;
 const apiURL = '/api'+pathname;
-let GLOBAL_numOfImgs = 0;
+let GLOBAL_currentImgIndex = 0;
 
 const attractionName = document.querySelector(".section__profile-name");
 const attractionInfo = document.querySelector(".section__profile-info");
@@ -8,7 +8,6 @@ const attractionDescription = document.querySelector(".infos__description");
 const attractionAddress = document.querySelector(".infos__address");
 const attractionTransport = document.querySelector(".infos__transport");
 const attractionImgsContainer = document.querySelector(".section__imgs-container");
-const attractionImgs = document.querySelector(".section__imgs");
 const imgRadioInputsContainer = document.querySelector(".img-radio-inputs-container");
 
 function createPageContent(attractionJSON){
@@ -24,12 +23,12 @@ function createPageContent(attractionJSON){
     attractionDescription.textContent = attractionData.description;
     attractionAddress.textContent = attractionData.address;
     attractionTransport.textContent = attractionData.transport;
-    GLOBAL_numOfImgs = attractionData.images.length;
     // img
     for(let i=0;i<attractionData.images.length;i++){
         let attractionImg = document.createElement("img");
+        attractionImg.classList.add("section__img");
         attractionImg.src = attractionData.images[i];
-        attractionImgs.appendChild(attractionImg);
+        attractionImgsContainer.appendChild(attractionImg);
         // img radio input
         let imgRadioInputContainer = document.createElement("div");
         let imgRadioInput = document.createElement("input");
@@ -41,40 +40,38 @@ function createPageContent(attractionJSON){
         if(i==0){
             imgRadioInput.checked = true;
         }
+        else{
+            attractionImg.classList.add("hidden");
+        }
         imgRadioInputsContainer.appendChild(imgRadioInputContainer);
         imgRadioInputContainer.appendChild(imgRadioInput);
         // img radio input eventlistener
         imgRadioInput.addEventListener("change", () => {
-            let windowWidth = window.innerWidth;
-            const imgsContainerCurrentLocation = attractionImgsContainer.scrollLeft;
-            let currentImgId = 0;
-            let scrollWidth = 0;
-            if(windowWidth > 1200){
-                currentImgId = imgsContainerCurrentLocation/540;
-                scrollWidth = (imgRadioInput.id - currentImgId)*540;
-            }
-            else{
-                currentImgId = imgsContainerCurrentLocation/windowWidth;
-                scrollWidth = (imgRadioInput.id - currentImgId)*windowWidth;
-            }
-            let imgsContainerTargetLocation = imgsContainerCurrentLocation+scrollWidth;
-            attractionImgsContainer.scrollTo({
-                left: imgsContainerTargetLocation,
-                behavior: 'smooth'
-            });
+            // 圖片轉換
+            const images = document.querySelectorAll('.section__img');
+            images[GLOBAL_currentImgIndex].classList.add('hidden');
+            GLOBAL_currentImgIndex = Number(imgRadioInput.id);
+            images[GLOBAL_currentImgIndex].classList.remove('hidden');
         })
     }
     
 
 }
 
-function calcScrollWidth(){
-    let windowWidth = window.innerWidth;
-    if(windowWidth > 1200){
-        return 540;
+function handleImgsTrans(direction=none){
+    const images = document.querySelectorAll('.section__img');
+    images[GLOBAL_currentImgIndex].classList.add('hidden');
+    if(direction==='right'){
+        GLOBAL_currentImgIndex = (GLOBAL_currentImgIndex + 1) % images.length;
     }
     else{
-        return windowWidth;
+        GLOBAL_currentImgIndex = (GLOBAL_currentImgIndex - 1 + images.length) % images.length;
+    }
+    images[GLOBAL_currentImgIndex].classList.remove('hidden');
+    // 圖片圓點
+    const selectImgRadioInput = document.getElementById(GLOBAL_currentImgIndex);
+    if(selectImgRadioInput){
+        selectImgRadioInput.checked = true;
     }
 }
 
@@ -94,68 +91,8 @@ headerTitle.addEventListener("click", () => {
 // imgs scroll 
 const imgsLeftButton = document.querySelector(".left-arrow-btn");
 const imgsRightButton = document.querySelector(".right-arrow-btn");
-imgsLeftButton.addEventListener("click", () => {
-    let windowWidth = window.innerWidth;
-    let scrollWidth = calcScrollWidth();
-    const imgsContainerCurrentLocation = attractionImgsContainer.scrollLeft;
-    let targetImgId = 0;
-    if(windowWidth > 1200){
-        targetImgId = (imgsContainerCurrentLocation - scrollWidth)/540;
-    }
-    else{
-        targetImgId = (imgsContainerCurrentLocation - scrollWidth)/windowWidth;
-    }
-    if(Number.isInteger(targetImgId) && targetImgId>-1){
-        let targetScrollLeft = 0;
-        if(windowWidth > 1200){
-            targetScrollLeft = targetImgId * 540;
-        }
-        else{
-            targetScrollLeft = targetImgId * windowWidth;
-        }
-        attractionImgsContainer.scrollTo({
-            left: targetScrollLeft,
-            behavior: 'smooth'
-        });
-        const selectImgRadioInput = document.getElementById(targetImgId);
-        if(selectImgRadioInput){
-            selectImgRadioInput.checked = true;
-        }
-    }
-});
-imgsRightButton.addEventListener("click", () => {
-    let windowWidth = window.innerWidth;
-    let scrollWidth = calcScrollWidth();
-    const imgsContainerCurrentLocation = attractionImgsContainer.scrollLeft;
-    let targetImgId = 0;
-    if(windowWidth > 1200){
-        targetImgId = (imgsContainerCurrentLocation + scrollWidth)/540;
-    }
-    else{
-        targetImgId = (imgsContainerCurrentLocation + scrollWidth)/windowWidth;
-    }
-    // 檢查目標圖片id是否為整數以及目標圖片是否超出總圖片数量
-    if (Number.isInteger(targetImgId) && targetImgId < GLOBAL_numOfImgs) {
-        // 計算目標滾動距離
-        let targetScrollLeft = 0;
-        if(windowWidth > 1200){
-            targetScrollLeft = targetImgId * 540;
-        }
-        else{
-            targetScrollLeft = targetImgId * windowWidth;
-        }
-        // 執行平滑滾動
-        attractionImgsContainer.scrollTo({
-            left: targetScrollLeft,
-            behavior: 'smooth'
-        });
-        // 圖片圓點
-        const selectImgRadioInput = document.getElementById(targetImgId);
-        if(selectImgRadioInput){
-            selectImgRadioInput.checked = true;
-        }
-    }
-});
+imgsLeftButton.addEventListener("click", () => handleImgsTrans(direction='left'));
+imgsRightButton.addEventListener("click", () => handleImgsTrans(direction='right'));
 
 
 // time 
