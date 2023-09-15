@@ -12,7 +12,7 @@ input[type="radio"]{
     cursor: pointer;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
-    background: none;
+    background: none; /* 刪除 Chorme 日曆小圖示 */
 }
 .align_center{
     display: flex;
@@ -108,12 +108,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     width: 12px;
     height: 12px;
     opacity: 0.75;
-    border-radius: 50%;
-    background-color: var(--additional-color-white);
-    &:checked{
-        background-color: var(--additional-color-black);
-        border: 1px solid var(--additional-color-white); /* 設定選取時的邊框 */
-    }
+}
+.img-radio-input:checked{
+    background-color: var(--additional-color-black);
+    border: 1px solid var(--additional-color-white); /* 設定選取時的邊框 */
 }
 .section__profile-container{
     width: 600px;
@@ -198,10 +196,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .time-radio-input{
     width: 22px;
     height: 22px; 
-    &:checked{
-        background-color: var(--primary-color-cyan-70);
-        border: 2px solid var(--additional-color-white); /* 設定選取時的邊框 */
-    }  
+}
+.time-radio-input:checked{
+    background-color: var(--primary-color-cyan-70);
+    border: 2px solid var(--additional-color-white); /* 設定選取時的邊框 */
 }
 .section__profile-booking-btn{
     display: inline-flex;
@@ -222,11 +220,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .infos{
     width: 1200px;
-    height: 362px;
+    height: min-content;
     flex-shrink: 0;
     color: var(--secondary-color-gray-70);
 
-    padding: 10px;
+    padding: 10px 10px 80px 10px;
     box-sizing: border-box;
     margin: 40px 0px;
 
