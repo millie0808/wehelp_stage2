@@ -37,7 +37,7 @@ CREATE TABLE attraction (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
     cat_id BIGINT not null,
-    description VARCHAR(512),
+    description VARCHAR(2048),
     address VARCHAR(255),
     transport VARCHAR(512),
     mrt_id BIGINT,
@@ -86,11 +86,8 @@ for attraction in data['result']['results']:
         """
         execute_query(category_query, (category,))
 
-    first_period_index = attraction['description'].find('。')
-    second_period_index = attraction['description'].find('。', first_period_index+1)
-    description = attraction['description'][0:second_period_index]
+    description = attraction['description']
     address = attraction['address'].replace(' ','')
-
     transport = attraction['direction']
     mrt = attraction['MRT']
     if mrt and mrt not in mrt_list:

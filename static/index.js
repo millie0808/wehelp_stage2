@@ -1,14 +1,13 @@
 const searchInput = document.querySelector(".guide__search-input");
 const attractionsGroup = document.querySelector(".main__attractions-group");
 const footer = document.querySelector(".footer");
-let isSearch = false;
-// let isLoading = false;
-let GLOBAL_nextPage = 0;
+let isSearching = false;
+let GLOBAL_nextPage = null;
 let GLOBAL_keyword = '';
 
 function createAttractionElement(attractionsJSON){
     const attractionsList = attractionsJSON.data;
-    for(i=0;i<attractionsList.length;i++){
+    for(let i=0;i<attractionsList.length;i++){
         let attractionContainer = document.createElement("div");
         let attractionImg = document.createElement("img");
         let attractionNameContainer = document.createElement("div");
@@ -46,6 +45,11 @@ function createAttractionElement(attractionsJSON){
         attractionInfoContainer.appendChild(attractionInfo);
         attractionInfo.appendChild(attractionInfoMrt);
         attractionInfo.appendChild(attractionInfoCategory);
+        // click to attraction page
+        attractionContainer.addEventListener("click", () => {
+            let url = "/attraction/"+attractionsList[i].id;
+            window.location.href = url;
+        });
     }
     // 下一頁資訊
     GLOBAL_nextPage = attractionsJSON.nextPage;
@@ -73,7 +77,7 @@ function deleteALLAttractionElement(){
 }
 
 function searchForKeyword(page, keyword){
-    isSearch = true;
+    isSearching = true;
     GLOBAL_keyword = keyword;
     let url = '/api/attractions?page='+page+'&keyword='+keyword;
     fetch(url).then(function(response){
@@ -94,8 +98,17 @@ function fetchAttractions(url){
         return response.json()
     }).then(function(attractionsJSON){
         createAttractionElement(attractionsJSON);
-        // isLoading = false;
     });
+}
+
+function calcScrollWidth(){
+    let windowWidth = window.innerWidth;
+    if(windowWidth > 1200){
+        return 1200 - 47*3;
+    }
+    else{
+        return windowWidth - 47*3;
+    }
 }
 
 
@@ -133,14 +146,13 @@ fetch('/api/mrts').then(function(response){
 fetchAttractions('/api/attractions?page=0');
 
 // Load more
-const observer = new IntersectionObserver(entries => {    
+const loadMoreObserver = new IntersectionObserver(entries => {    
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             // 如果加載指示符進入視口，執行加載下一頁的邏輯
-            // isLoading = true;
             if(GLOBAL_nextPage){
                 let url = '';
-                if(isSearch){
+                if(isSearching){
                     url = '/api/attractions?page='+GLOBAL_nextPage+'&keyword='+GLOBAL_keyword;
                 }
                 else{
@@ -149,28 +161,22 @@ const observer = new IntersectionObserver(entries => {
                 fetchAttractions(url);
             }
             else{
-                isSearch = false;
+                isSearching = false;
             }
         }
     });
 });
-observer.observe(footer);
+loadMoreObserver.observe(footer);
 
 
 // List Bar Scroll
 const listBarContainer = document.querySelector(".main__list-bar-container");
-const listBarLeftButton = document.querySelector(".main__list-bar-left-btn");
-const listBarRightButton = document.querySelector(".main__list-bar-right-btn");
+const listBarLeftButton = document.querySelector(".left-arrow-btn");
+const listBarRightButton = document.querySelector(".right-arrow-btn");
 // 左滾動按鈕事件
 listBarLeftButton.addEventListener("click", () => {
-    let windowWidth = window.innerWidth;
-    let listBarCurrentLocation = listBarContainer.scrollLeft;
-    if(windowWidth > 1200){
-        scrollWidth = 1200 - 47*3;
-    }
-    else{
-        scrollWidth = windowWidth - 47*3;
-    }
+    let scrollWidth = calcScrollWidth();
+    const listBarCurrentLocation = listBarContainer.scrollLeft;
     let listBarTargetLocation = listBarCurrentLocation - scrollWidth;
     listBarContainer.scrollTo({
         left: listBarTargetLocation,
@@ -179,14 +185,8 @@ listBarLeftButton.addEventListener("click", () => {
 });
 // 右滾動按鈕事件
 listBarRightButton.addEventListener("click", () => {
-    let windowWidth = window.innerWidth;
-    let listBarCurrentLocation = listBarContainer.scrollLeft;
-    if(windowWidth > 1200){
-        scrollWidth = 1200 - 47*3;
-    }
-    else{
-        scrollWidth = windowWidth - 47*3;
-    }
+    let scrollWidth = calcScrollWidth();
+    const listBarCurrentLocation = listBarContainer.scrollLeft;
     let listBarTargetLocation = listBarCurrentLocation + scrollWidth;
     listBarContainer.scrollTo({
         left: listBarTargetLocation,
@@ -214,3 +214,9 @@ searchButton.addEventListener("click", () => {
     const inputValue = searchInput.value;
     searchForKeyword(0, inputValue);
 });
+
+// Header title
+const headerTitle = document.querySelector(".header__title");
+headerTitle.addEventListener("click", () => {
+    window.location.href = "/";
+})
