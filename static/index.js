@@ -1,4 +1,3 @@
-const searchInput = document.querySelector(".guide__search-input");
 const attractionsGroup = document.querySelector(".main__attractions-group");
 const footer = document.querySelector(".footer");
 let isSearching = false;
@@ -194,14 +193,19 @@ listBarRightButton.addEventListener("click", () => {
     });
 });
 
-// Search input : Focus
-searchInput.addEventListener("focus", () => {
-    if(searchInput.value === "輸入景點名稱查詢"){
-        searchInput.value = "";
-    }
+// Input : Focus placeholder color
+const allInput = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+allInput.forEach(function(input){
+    input.addEventListener("focus", () => {
+        input.style.setProperty("--placeholder-color", "var(--secondary-color-gray-20)");
+    })
+    input.addEventListener("blur", () => {
+        input.style.setProperty("--placeholder-color", "var(--secondary-color-gray-50)");
+    })
 });
 
 // Search input : Keyup enter   !!!!!!
+// const searchInput = document.querySelector(".guide__search-input");
 // searchInput.addEventListener("keyup", (event) => {
 //     if(event.key === "Enter" || event.keyCode === 13){
 //         searchForKeyword();
@@ -219,4 +223,100 @@ searchButton.addEventListener("click", () => {
 const headerTitle = document.querySelector(".header__title");
 headerTitle.addEventListener("click", () => {
     window.location.href = "/";
+})
+
+// 登入/註冊 Button
+const signInUpButton = document.querySelector(".header__btn-login");
+const signIn = document.querySelector(".signin");
+const signUp = document.querySelector(".signup");
+signInUpButton.addEventListener("click", () => {
+    signIn.classList.remove("none");
+})
+
+// 登入區塊
+    // close
+const signInClosButton = document.querySelector("#sign-in-close");
+signInClosButton.addEventListener("click", () => {
+    signIn.classList.add("none");
+})
+    // jump
+const signInJumpButton = document.querySelector("#sign-in-jump");
+signInJumpButton.addEventListener("click", () => {
+    signIn.classList.add("none");
+    signUp.classList.remove("none");
+})
+
+// 註冊區塊
+    // close
+const signUpClosButton = document.querySelector("#sign-up-close");
+signUpClosButton.addEventListener("click", () => {
+    signUp.classList.add("none");
+})
+    // jump
+const signUpJumpButton = document.querySelector("#sign-up-jump");
+signUpJumpButton.addEventListener("click", () => {
+    signUp.classList.add("none");
+    signIn.classList.remove("none");
+})
+
+// 註冊功能
+const signUpForm = document.querySelector(".signup__container");
+const signUpContainer = document.querySelector(".signup__container");
+const signUpJumpDiv = document.querySelector("#sign-up-jump-div");
+const signUpNameInput = document.getElementsByName("sign-up-name")[0];
+const signUpEmailInput = document.getElementsByName("sign-up-email")[0];
+const signUpPasswordInput = document.getElementsByName("sign-up-password")[0];
+
+signUpForm.addEventListener("submit", (event) => {
+    event.preventDefault(); //防止form submit跳轉行為
+    const userData = {
+        'name': signUpNameInput.value,
+        'email': signUpEmailInput.value,
+        'password': signUpPasswordInput.value
+    };
+    let apiURL = '/api/user';
+    fetch(apiURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+    }).then((response) => {
+        return response.json();
+    }).then((result) => {
+        if(result.ok){
+            const existedResultSpan = document.querySelector("#sign-up-result");
+            if(existedResultSpan){
+                signUpContainer.removeChild(existedResultSpan);
+            }
+            let successSpan = document.createElement("span");
+            successSpan.id = "sign-up-result";
+            successSpan.classList.add("sign-result");
+            successSpan.classList.add("success");
+            successSpan.classList.add("body_med");
+            successSpan.textContent = "註冊成功，請登入系統";
+            signUpContainer.insertBefore(successSpan, signUpJumpDiv);
+        }
+        if(result.error){
+            const existedResultSpan = document.querySelector("#sign-up-result");
+            if(existedResultSpan){
+                signUpContainer.removeChild(existedResultSpan);
+            }
+            let errorSpan = document.createElement("span");
+            errorSpan.id = "sign-up-result";
+            errorSpan.classList.add("sign-result");
+            errorSpan.classList.add("error");
+            errorSpan.classList.add("body_med");
+            if(result.message === "註冊失敗，email已存在"){
+                errorSpan.textContent = "Email已經註冊帳戶";
+            }
+            else if(result.message === "註冊失敗，email格式錯誤"){
+                errorSpan.textContent = "Email格式錯誤";
+            }
+            else{
+                errorSpan.textContent = "伺服器內部錯誤";
+            }
+            signUpContainer.insertBefore(errorSpan, signUpJumpDiv);
+        }
+    })
 })

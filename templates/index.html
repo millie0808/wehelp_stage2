@@ -22,6 +22,41 @@
             </div>
         </div>  
     </div>
+    <div class="signup none">
+        <div class="sign-decorator-bar"></div>
+        <button class="sign-close" id="sign-up-close">
+            <img src="/close.png" >
+        </button>
+        <div class="signup__container">
+            <span class="sign-header header3">註冊會員帳號</span>
+            <form id="signupForm">
+                <input class="sign-input body_med" type="text" name="sign-up-name" placeholder="輸入姓名" required>
+                <input class="sign-input body_med" type="email" name="sign-up-email" placeholder="輸入電子郵件" required>
+                <input class="sign-input body_med" type="password" name="sign-up-password" placeholder="輸入密碼" required>
+                <button class="sign-btn button_reg" type="submit" >註冊新帳戶</button>
+            </form> 
+            <div class="sign-jumps" id="sign-up-jump-div">
+                <span class="body_med">已經有帳戶了？</span>
+                <button class="body_med" id="sign-up-jump">點此登入</button>
+            </div>
+        </div>
+    </div>
+    <div class="signin none">
+        <div class="sign-decorator-bar"></div>
+        <button class="sign-close" id="sign-in-close">
+            <img src="/close.png" >
+        </button>
+        <div class="signin__container">
+            <span class="sign-header header3">登入會員帳號</span>
+            <input class="sign-input body_med" type="email" placeholder="輸入電子郵件" name="sign-in-email" required>
+            <input class="sign-input body_med" type="password" placeholder="輸入密碼" name="sign-in-password" required>
+            <button class="sign-btn button_reg">登入帳戶</button>
+            <div class="sign-jumps">
+                <span class="body_med">還沒有帳戶？</span>
+                <button class="body_med" id="sign-in-jump">點此註冊</button>
+            </div>
+        </div>
+    </div>
     <div class="banner">
         <div class="guide">
             <div class="guide__container">
@@ -32,7 +67,7 @@
                 <div class="guide__search">
                     <div class="guide__search-bar">
                         <div class="guide__search-input-container">
-                            <input class="guide__search-input body_bold" type="text" name="" id="" value="輸入景點名稱查詢">
+                            <input class="guide__search-input body_bold" type="text" placeholder="輸入景點名稱查詢">
                         </div>
                         <div class="guide__search-btn-container">
                             <button class="guide__search-btn"></button>

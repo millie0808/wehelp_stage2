@@ -1,5 +1,6 @@
 from flask import *
 from mysql.connector.pooling import MySQLConnectionPool
+import re
 
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
@@ -30,15 +31,21 @@ connection_pool = MySQLConnectionPool(
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
 
 # Functions
-def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False):
+def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False, rowcount=False):
 	connection = connection_pool.get_connection()
 	cursor = connection.cursor(dictionary=True)
 	if group_concat:
 		cursor.execute('SET SESSION group_concat_max_len = 1000000;')
 	cursor.execute(query, params)
 	if commit:
+		affected_rows = None
+		if rowcount:
+			affected_rows = cursor.rowcount
 		connection.commit()
+		cursor.close()
 		connection.close()
+		if affected_rows != None:
+			return affected_rows
 	else:
 		result = None
 		if fetch_one:
@@ -106,6 +113,31 @@ def handle_api_mrts():
 	result = [station['name'] for station in query_result]
 	return result
 
+def is_valid_email(email):
+    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    if re.match(email_pattern, email):
+        return True
+    else:
+        return False
+
+def check_signup(name, email, password):
+	sql_query = """
+		INSERT INTO user (name, email, password) 
+		SELECT %s, %s, %s 
+		FROM user 
+		WHERE NOT EXISTS ( 
+			SELECT 1 
+			FROM user 
+			WHERE email = %s
+		) 
+		LIMIT 1;
+		"""
+	affected_rows = execute_query(sql_query, (name, email, password, email), commit=True, rowcount=True)
+	if affected_rows == 0:
+		return False
+	else:
+		return True
+
 # Pages
 @app.route("/")
 def index():
@@ -172,6 +204,33 @@ def api_mrts():
 		return jsonify({"data": result}), utf8
 	except:
 		return api_error("伺服器內部錯誤", 500)
+
+@app.route("/api/user", methods=['POST'])
+def api_user():
+	try:
+		data = request.get_json()
+		name = data['name']
+		email = data['email']
+		password = data['password']
+		if is_valid_email(email):
+			signup_result = check_signup(name, email, password)
+			if signup_result:
+				return jsonify({"ok": True}), utf8
+			else:
+				return api_error("註冊失敗，email已存在", 400)
+		else:
+			return api_error("註冊失敗，email格式錯誤", 400)
+	except:
+		return api_error("伺服器內部錯誤", 500)
+
+# @app.route("/api/user/auth")
+# def api_user_auth():
+# 	if request.method == 'PUT':
+
+# 	if request.method == 'GET':
+
+
+
 
 
 if __name__ == "__main__":

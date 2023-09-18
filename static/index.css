@@ -1,10 +1,23 @@
 body{
     margin: 0px;
     scroll-behavior: smooth;
+    position: relative;
+    display: flex; /* for sign */
+    flex-direction: column;
+    align-items: center;
 }
 input{
     border: 0;
     margin: 0;
+}
+input[type=text]::placeholder{
+    color: var(--placeholder-color);
+}
+input[type=email]::placeholder{
+    color: var(--placeholder-color);
+}
+input[type=password]::placeholder{
+    color: var(--placeholder-color);
 }
 button{
     border: 0;
@@ -22,7 +35,12 @@ button{
     --secondary-color-gray-10: #F8F8F8;
     --additional-color-white: #FFF;
     --additional-color-black: #000;
-    
+    --placeholder-color: #757575;
+    --success-green: #5cb85c;
+    --error-red: #ff3333;
+}
+.none{
+    display: none;
 }
 .header{
     width: 100%; 
@@ -98,6 +116,126 @@ button{
 
     display: inline-block;   /* for w and h */
     white-space: nowrap; /* 文字不換行 */
+}
+.signup{
+    width: 340px;
+    height: fit-content;
+    position: absolute;
+    top: 80px;
+    z-index: 2;
+    border-radius: 6px;
+    background: var(--additional-color-white);
+    box-shadow: 0px 4px 60px 0px #AAA;
+    overflow: hidden;
+}
+.sign-decorator-bar{
+    width: 340px;
+    height: 10px;
+    background: linear-gradient(270deg, #378 0%, #6AB 100%);
+}
+.sign-close{
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 27px;
+    right: 17px;
+}
+.sign-close img{
+    width: 16px;
+    height: 16px;
+    object-fit: cover;
+}
+.signup__container{
+    width: 340px;
+    height: fit-content;
+    flex-shrink: 0;
+    
+    box-sizing: border-box;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+.sign-header{
+    display: flex;
+    width: 310px;
+    height: 27px;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--secondary-color-gray-70);
+    text-align: center;
+    margin-bottom: 15px;
+}
+.sign-input{
+    width: 310px;
+    height: 47px;
+    box-sizing: border-box;
+    padding: 15px;
+    color: var(--secondary-color-gray-50);
+    border-radius: 5px;
+    border: 1px solid var(--Gray-500, #CCC);
+    background: var(--additional-color-white);
+    margin-bottom: 10px;
+}
+.sign-btn{
+    display: flex;
+    width: 310px;
+    height: 47px;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    background: var(--primary-color-cyan-70);    
+    color: var(--additional-color-white);
+    text-align: center; 
+    margin-bottom: 10px;
+}
+.sign-result{
+    width: 310px;
+    height: 22px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.success{
+    color: var(--success-green);
+}
+.error{
+    color: var(--error-red);
+}
+.sign-jumps{
+    width: 310px;
+    height: 22px;
+    color: var(--secondary-color-gray-70);
+    text-align: center;
+    display: inline;
+}
+.sign-jumps button{
+    color: var(--secondary-color-gray-70);
+}
+.signin{
+    width: 340px;
+    height: fit-content;
+    position: absolute;
+    top: 80px;
+    z-index: 2;
+    border-radius: 6px;
+    background: var(--additional-color-white);
+    box-shadow: 0px 4px 60px 0px #AAA;
+    overflow: hidden;
+}
+.signin__container{
+    width: 340px;
+    height: fit-content;
+    flex-shrink: 0;
+    
+    box-sizing: border-box;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
 }
 .banner{
     width: 100%;
