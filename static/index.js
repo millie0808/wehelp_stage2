@@ -277,7 +277,6 @@ allInput.forEach(function(input){
 });
 
 // Search input : Keyup enter   !!!!!!
-// const searchInput = document.querySelector(".guide__search-input");
 // searchInput.addEventListener("keyup", (event) => {
 //     if(event.key === "Enter" || event.keyCode === 13){
 //         searchForKeyword();
@@ -286,6 +285,7 @@ allInput.forEach(function(input){
 
 // Search button
 const searchButton = document.querySelector(".guide__search-btn");
+const searchInput = document.querySelector(".guide__search-input");
 searchButton.addEventListener("click", () => {
     const inputValue = searchInput.value;
     searchForKeyword(0, inputValue);
