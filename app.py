@@ -1,6 +1,9 @@
 from flask import *
 from mysql.connector.pooling import MySQLConnectionPool
 import re
+import jwt
+import random
+import string
 
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
@@ -29,6 +32,15 @@ connection_pool = MySQLConnectionPool(
 
 # Global variables
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
+
+# jwt 密鑰
+def generate_random_string(length):
+    # 選擇包含的字符集合
+    characters = string.ascii_letters + string.digits  # 包含字母和數字
+    # 使用隨機函數生成指定長度的隨機字符串
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string
+SECRET_KEY = generate_random_string(10)
 
 # Functions
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False, rowcount=False):
@@ -138,6 +150,34 @@ def check_signup(name, email, password):
 	else:
 		return True
 
+def check_signin(email, password):
+	sql_query = """
+		SELECT id, name, email
+		FROM user
+		WHERE email = %s AND password = %s;
+		"""
+	query_result = execute_query(sql_query, (email, password), fetch_one=True)
+	return query_result
+
+def generate_jwt_token(user_data):
+    payload = {
+		'id': user_data['id'],
+		'name': user_data['name'],
+		'email': user_data['email']
+	}
+    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+def verify_jwt_token(token):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        return payload
+    except jwt.ExpiredSignatureError:
+        # Token已過期
+        return None
+    except jwt.InvalidTokenError:
+        # Token無效
+        return None
+
 # Pages
 @app.route("/")
 def index():
@@ -223,11 +263,34 @@ def api_user():
 	except:
 		return api_error("伺服器內部錯誤", 500)
 
-# @app.route("/api/user/auth")
-# def api_user_auth():
-# 	if request.method == 'PUT':
+@app.route("/api/user/auth", methods=['PUT', 'GET'])
+def api_user_auth():
+	try:
+		if request.method == 'PUT':
+			data = request.get_json()
+			email = data['email']
+			password = data['password']
+			if is_valid_email(email):
+				signin_result = check_signin(email, password)
+				if signin_result:
+					jwt_token = generate_jwt_token(signin_result)
+					return jsonify({"token": jwt_token})
+				else:
+					return api_error("登入失敗，帳號密碼錯誤", 400)
+			else:
+				return api_error("登入失敗，email格式錯誤", 400)
+		if request.method == 'GET':
+			authorization_header = request.headers.get('Authorization')
+			if authorization_header and authorization_header.startswith('Bearer '):
+				token = authorization_header.split(' ')[1]
+			decoded_payload = verify_jwt_token(token)
+			if decoded_payload:
+				return jsonify({"data": decoded_payload})
+			else:
+				return jsonify(None)
+	except:
+		return api_error("伺服器內部錯誤", 500)
 
-# 	if request.method == 'GET':
 
 
 

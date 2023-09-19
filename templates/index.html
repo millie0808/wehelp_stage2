@@ -18,6 +18,9 @@
                     <button class="header__btn-login">
                         <span class="header__btn-login-text body_med">登入/註冊</span>
                     </button>
+                    <button class="header__btn-logout none">
+                        <span class="header__btn-logout-text body_med">登出系統</span>
+                    </button>
                 </div>
             </div>
         </div>  
@@ -48,10 +51,12 @@
         </button>
         <div class="signin__container">
             <span class="sign-header header3">登入會員帳號</span>
-            <input class="sign-input body_med" type="email" placeholder="輸入電子郵件" name="sign-in-email" required>
-            <input class="sign-input body_med" type="password" placeholder="輸入密碼" name="sign-in-password" required>
-            <button class="sign-btn button_reg">登入帳戶</button>
-            <div class="sign-jumps">
+            <form id="signinForm">
+                <input class="sign-input body_med" type="email" name="sign-in-email" placeholder="輸入電子郵件" required>
+                <input class="sign-input body_med" type="password" name="sign-in-password" placeholder="輸入密碼" required>
+                <button class="sign-btn button_reg" type="submit">登入帳戶</button>
+            </form>
+            <div class="sign-jumps" id="sign-in-jump-div">
                 <span class="body_med">還沒有帳戶？</span>
                 <button class="body_med" id="sign-in-jump">點此註冊</button>
             </div>
