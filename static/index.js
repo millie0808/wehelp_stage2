@@ -110,6 +110,33 @@ function calcScrollWidth(){
     }
 }
 
+function createSignUpResult(result){
+    const existedResultSpan = document.querySelector("#sign-up-result");
+    if(existedResultSpan){
+        signUpContainer.removeChild(existedResultSpan);
+    }
+    let resultSpan = document.createElement("span");
+    resultSpan.id = "sign-up-result";
+    resultSpan.classList.add("sign-result");
+    resultSpan.classList.add("body_med");
+    if(result.ok){
+        resultSpan.classList.add("success");
+        resultSpan.textContent = "註冊成功，請登入系統";
+    }
+    if(result.error){
+        resultSpan.classList.add("error");
+        if(result.message === "註冊失敗，email已存在"){
+            resultSpan.textContent = "Email已經註冊帳戶";
+        }
+        else if(result.message === "註冊失敗，email格式錯誤"){
+            resultSpan.textContent = "Email格式錯誤";
+        }
+        else{
+            resultSpan.textContent = "伺服器內部錯誤";
+        }
+    }
+    signUpContainer.insertBefore(resultSpan, signUpJumpDiv);
+}
 
 // List bar
 fetch('/api/mrts').then(function(response){
@@ -284,39 +311,6 @@ signUpForm.addEventListener("submit", (event) => {
     }).then((response) => {
         return response.json();
     }).then((result) => {
-        if(result.ok){
-            const existedResultSpan = document.querySelector("#sign-up-result");
-            if(existedResultSpan){
-                signUpContainer.removeChild(existedResultSpan);
-            }
-            let successSpan = document.createElement("span");
-            successSpan.id = "sign-up-result";
-            successSpan.classList.add("sign-result");
-            successSpan.classList.add("success");
-            successSpan.classList.add("body_med");
-            successSpan.textContent = "註冊成功，請登入系統";
-            signUpContainer.insertBefore(successSpan, signUpJumpDiv);
-        }
-        if(result.error){
-            const existedResultSpan = document.querySelector("#sign-up-result");
-            if(existedResultSpan){
-                signUpContainer.removeChild(existedResultSpan);
-            }
-            let errorSpan = document.createElement("span");
-            errorSpan.id = "sign-up-result";
-            errorSpan.classList.add("sign-result");
-            errorSpan.classList.add("error");
-            errorSpan.classList.add("body_med");
-            if(result.message === "註冊失敗，email已存在"){
-                errorSpan.textContent = "Email已經註冊帳戶";
-            }
-            else if(result.message === "註冊失敗，email格式錯誤"){
-                errorSpan.textContent = "Email格式錯誤";
-            }
-            else{
-                errorSpan.textContent = "伺服器內部錯誤";
-            }
-            signUpContainer.insertBefore(errorSpan, signUpJumpDiv);
-        }
+        createSignUpResult(result);
     })
 })
