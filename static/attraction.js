@@ -1,5 +1,5 @@
 const pathname = window.location.pathname;
-const apiURL = '/api'+pathname;
+const attractionIdApiURL = '/api'+pathname;
 let GLOBAL_currentImgIndex = 0;
 
 const attractionName = document.querySelector(".section__profile-name");
@@ -76,17 +76,11 @@ function handleImgsTrans(direction=none){
 }
 
 
-fetch(apiURL).then(response => {
+fetch(attractionIdApiURL).then(response => {
     return response.json();
 }).then(attractionJSON => {
     createPageContent(attractionJSON);
 });
-
-// Header title
-const headerTitle = document.querySelector(".header__title");
-headerTitle.addEventListener("click", () => {
-    window.location.href = "/";
-})
 
 // imgs scroll 
 const imgsLeftButton = document.querySelector(".left-arrow-btn");

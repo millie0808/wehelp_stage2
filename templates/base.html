@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北一日遊</title>
+    <link rel="stylesheet" type="text/css" href="/base.css">
+
+    {% block css_content %}
+    {% endblock %}
+
+</head>
+<body>
+    <div class="header">
+        <div class="header__container">
+            <button class="header__title header2">台北一日遊</button>
+            <div class="header__btn">
+                <div class="header_btn-container">
+                    <button class="header__btn-booking">
+                        <span class="header__btn-booking-text body_med">預定行程</span>
+                    </button>
+                    <button class="header__btn-login">
+                        <span class="header__btn-login-text body_med">登入/註冊</span>
+                    </button>
+                    <button class="header__btn-logout none">
+                        <span class="header__btn-logout-text body_med">登出系統</span>
+                    </button>
+                </div>
+            </div>
+        </div>  
+    </div>
+    <div class="signup none">
+        <div class="sign-decorator-bar"></div>
+        <button class="sign-close" id="sign-up-close">
+            <img src="/close.png" >
+        </button>
+        <div class="signup__container">
+            <span class="sign-header header3">註冊會員帳號</span>
+            <form id="signupForm">
+                <input class="sign-input body_med" type="text" name="sign-up-name" placeholder="輸入姓名" required>
+                <input class="sign-input body_med" type="email" name="sign-up-email" placeholder="輸入電子郵件" required>
+                <input class="sign-input body_med" type="password" name="sign-up-password" placeholder="輸入密碼" required>
+                <button class="sign-btn button_reg" type="submit" >註冊新帳戶</button>
+            </form> 
+            <div class="sign-jumps" id="sign-up-jump-div">
+                <span class="body_med">已經有帳戶了？</span>
+                <button class="body_med" id="sign-up-jump">點此登入</button>
+            </div>
+        </div>
+    </div>
+    <div class="signin none">
+        <div class="sign-decorator-bar"></div>
+        <button class="sign-close" id="sign-in-close">
+            <img src="/close.png" >
+        </button>
+        <div class="signin__container">
+            <span class="sign-header header3">登入會員帳號</span>
+            <form id="signinForm">
+                <input class="sign-input body_med" type="email" name="sign-in-email" placeholder="輸入電子郵件" required>
+                <input class="sign-input body_med" type="password" name="sign-in-password" placeholder="輸入密碼" required>
+                <button class="sign-btn button_reg" type="submit">登入帳戶</button>
+            </form>
+            <div class="sign-jumps" id="sign-in-jump-div">
+                <span class="body_med">還沒有帳戶？</span>
+                <button class="body_med" id="sign-in-jump">點此註冊</button>
+            </div>
+        </div>
+    </div>
+
+    {% block main_content %}
+    {% endblock %}
+
+    <div class="footer">
+        <div class="footer__container">
+            <div class="footer__text body_bold">COPYRIGHT © 2021 台北一日遊</div>
+        </div>
+    </div>
+    <script src="/base.js"></script>
+
+    {% block script_content %}
+    {% endblock %}
+
+</body>
+</html>

@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>台北一日遊</title>
-    <link rel="stylesheet" type="text/css" href="/index.css">
-    <link rel="stylesheet" type="text/css" href="/attraction.css">
-</head>
-<body>
-    <div class="header">
-        <div class="header__container">
-            <button class="header__title header2">台北一日遊</button>
-            <div class="header__btn">
-                <div class="header_btn-container">
-                    <button class="header__btn-booking">
-                        <span class="header__btn-booking-text body_med">預定行程</span>
-                    </button>
-                    <button class="header__btn-login">
-                        <span class="header__btn-login-text body_med">登入/註冊</span>
-                    </button>
-                </div>
-            </div>
-        </div>  
-    </div>
+{% extends "base.html" %}
+{% block css_content %}
+<link rel="stylesheet" type="text/css" href="/attraction.css">
+{% endblock %}
+{% block main_content %}
     <div class="separator_nav"></div>
     <div class="section">
         <div class="section__btns-container">
@@ -92,11 +72,7 @@
         <span class="body_bold align_center">交通方式：</span>
         <span class="infos__transport content_reg align_center"></span>
     </div>
-    <div class="footer">
-        <div class="footer__container">
-            <div class="footer__text body_bold">COPYRIGHT © 2021 台北一日遊</div>
-        </div>
-    </div>
+{% endblock %}
+{% block script_content %}
     <script src="/attraction.js"></script>
-</body>
-</html>
+{% endblock %}
