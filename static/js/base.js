@@ -140,7 +140,8 @@ signInForm.addEventListener("submit", (event) => {
         }
         if(result.token){
             localStorage.setItem('token', result.token);
-            window.location.href = '/';
+            const pathname = window.location.pathname;
+            window.location.href = pathname;
         }
     })
 })
