@@ -30,7 +30,7 @@ headerTitle.addEventListener("click", () => {
 const allInput = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
 allInput.forEach(function(input){
     input.addEventListener("focus", () => {
-        input.style.setProperty("--placeholder-color", "var(--secondary-color-gray-20)");
+        input.style.setProperty("--placeholder-color", "#cccccc");
     })
     input.addEventListener("blur", () => {
         input.style.setProperty("--placeholder-color", "var(--secondary-color-gray-50)");
@@ -42,14 +42,14 @@ const signInUpButton = document.querySelector(".header__btn-login");
 const signIn = document.querySelector(".signin");
 const signUp = document.querySelector(".signup");
 signInUpButton.addEventListener("click", () => {
-    signIn.classList.remove("none");
+    signIn.showModal();
 })
 
 // 登入區塊
     // close
 const signInClosButton = document.querySelector("#sign-in-close");
 signInClosButton.addEventListener("click", () => {
-    signIn.classList.add("none");
+    signIn.close();
     const existedResultSpan = document.querySelector("#sign-in-result");
     if(existedResultSpan){
         signInContainer.removeChild(existedResultSpan);
@@ -58,15 +58,15 @@ signInClosButton.addEventListener("click", () => {
     // jump
 const signInJumpButton = document.querySelector("#sign-in-jump");
 signInJumpButton.addEventListener("click", () => {
-    signIn.classList.add("none");
-    signUp.classList.remove("none");
+    signIn.close();
+    signUp.showModal();
 })
 
 // 註冊區塊
     // close
 const signUpClosButton = document.querySelector("#sign-up-close");
 signUpClosButton.addEventListener("click", () => {
-    signUp.classList.add("none");
+    signUp.close();
     const existedResultSpan = document.querySelector("#sign-up-result");
     if(existedResultSpan){
         signUpContainer.removeChild(existedResultSpan);
@@ -75,8 +75,8 @@ signUpClosButton.addEventListener("click", () => {
     // jump
 const signUpJumpButton = document.querySelector("#sign-up-jump");
 signUpJumpButton.addEventListener("click", () => {
-    signUp.classList.add("none");
-    signIn.classList.remove("none");
+    signUp.close();
+    signIn.showModal();
 })
 
 // 註冊功能
