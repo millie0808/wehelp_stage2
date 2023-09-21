@@ -13,7 +13,6 @@ fetch('/api/user/auth', {
         signOutButton.classList.remove("none");
     }
     else{
-        console.log("1");
         signInUpButton.classList.remove("none");
     }
 })
@@ -46,7 +45,8 @@ signInUpButton.addEventListener("click", () => {
 const signOutButton = document.querySelector(".header__btn-logout");
 signOutButton.addEventListener("click", () => {
     localStorage.removeItem('token');
-    window.location.href = '/';
+    const pathname = window.location.pathname;
+    window.location.href = pathname;
 })
 
 // 登入區塊
