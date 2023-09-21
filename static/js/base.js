@@ -10,13 +10,11 @@ fetch('/api/user/auth', {
     return response.json();
 }).then((authorizationResult) => {
     if(authorizationResult){
-        signInUpButton.classList.add("none");
-        const signOutButton = document.querySelector(".header__btn-logout");
         signOutButton.classList.remove("none");
-        signOutButton.addEventListener("click", () => {
-            localStorage.removeItem('token');
-            window.location.href = '/';
-        })
+    }
+    else{
+        console.log("1");
+        signInUpButton.classList.remove("none");
     }
 })
 
@@ -43,6 +41,12 @@ const signIn = document.querySelector(".signin");
 const signUp = document.querySelector(".signup");
 signInUpButton.addEventListener("click", () => {
     signIn.showModal();
+})
+// 登出 Button
+const signOutButton = document.querySelector(".header__btn-logout");
+signOutButton.addEventListener("click", () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
 })
 
 // 登入區塊
