@@ -7,7 +7,7 @@ body{
     height: 320px;
     background: linear-gradient(135deg, var(--primary-color-cyan-20) 0%, var(--primary-color-cyan-50) 100%);
 
-    background-image: url("/welcome.png");
+    background-image: url("/images/welcome.png");
     background-repeat: no-repeat;
     background-size: cover;
     
