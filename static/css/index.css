@@ -325,10 +325,6 @@ body{
     text-align: right;
 }
 @media (max-width:1200px){
-    .header__container{
-        width: 97%;
-        left: 10px;
-    }
     .guide{
         width: 95%;
         margin: 10px;
@@ -345,7 +341,6 @@ body{
     .main__attraction-container{
         width: calc((100% - 30px * 2)/3);
     }
-    
 }
 
 @media (max-width:600px){

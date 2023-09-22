@@ -65,7 +65,6 @@ dialog::backdrop{
     justify-content: center;
 }
 .header__container{
-    /* width: 62.5%; */
     width: 1200px;
     height: 34px;
     
@@ -79,18 +78,11 @@ dialog::backdrop{
 
     display: flex;
 }
-.header_btn{
+.header__btn{
     width: auto; 
     max-width: 175px; 
     height: auto; 
     max-height: 34px; 
-}
-.header__btn-container{
-    width: auto; 
-    max-width: 175px; 
-    height: auto; 
-    max-height: 34px;
-
     display: flex;
     justify-content: space-between;
 }
@@ -99,31 +91,21 @@ dialog::backdrop{
     max-width: 84px; 
     height: 34px;
     padding: 10px;
-}
-.header__btn-booking-text{
-    width: auto;
-    max-width: 64px;
-    height: auto;
-    max-height: 14px;
-    color: var(--secondary-color-gray-70);
 
-    display: inline-block;  /* for w and h */
-    white-space: nowrap; /* 文字不換行 */
+    color: var(--secondary-color-gray-70);
+}
+.header__btn-log-container{
+    width: auto; 
+    min-width: 84px;
+    max-width: 91px; 
+    height: 34px;
 }
 .header__btn-login{
     width: auto; 
     max-width: 91px; 
     height: 34px;
     padding: 10px;
-}
-.header__btn-login-text{
-    width: auto;
-    max-width: 71px;
-    height: auto;
-    max-height: 14px;
     color: var(--secondary-color-gray-70);
-
-    display: inline-block;   /* for w and h */
     white-space: nowrap; /* 文字不換行 */
 }
 .header__btn-logout{
@@ -131,6 +113,7 @@ dialog::backdrop{
     max-width: 84px; 
     height: 34px;
     padding: 10px;
+    color: var(--secondary-color-gray-70);
 }
 .header__btn-logout-text{
     width: auto;
@@ -288,6 +271,13 @@ dialog::backdrop{
 
     position: absolute;
     white-space: nowrap;
+}
+
+@media (max-width:1200px){
+    .header__container{
+        width: 100%;
+        padding: 0px 0px 0px 10px;
+    }
 }
 
 /* 字型 */
