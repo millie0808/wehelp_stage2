@@ -1,27 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>台北一日遊</title>
-    <link rel="stylesheet" type="text/css" href="/index.css">
-</head>
-<body>
-    <div class="header">
-        <div class="header__container">
-            <button class="header__title header2">台北一日遊</button>
-            <div class="header__btn">
-                <div class="header_btn-container">
-                    <button class="header__btn-booking">
-                        <span class="header__btn-booking-text body_med">預定行程</span>
-                    </button>
-                    <button class="header__btn-login">
-                        <span class="header__btn-login-text body_med">登入/註冊</span>
-                    </button>
-                </div>
-            </div>
-        </div>  
-    </div>
+{% extends "base.html" %}
+{% block css_content %}
+<link rel="stylesheet" type="text/css" href="/css/index.css">
+{% endblock %}
+{% block main_content %}
     <div class="banner">
         <div class="guide">
             <div class="guide__container">
@@ -32,12 +13,12 @@
                 <div class="guide__search">
                     <div class="guide__search-bar">
                         <div class="guide__search-input-container">
-                            <input class="guide__search-input body_bold" type="text" name="" id="" value="輸入景點名稱查詢">
+                            <input class="guide__search-input body_bold" type="text" placeholder="輸入景點名稱查詢">
                         </div>
                         <div class="guide__search-btn-container">
                             <button class="guide__search-btn"></button>
                             <div class="guide__search-btn-icon">
-                                <img class="guide__search-btn-icon-img" src="/search.png" alt="">
+                                <img class="guide__search-btn-icon-img" src="/images/search.png" alt="">
                             </div>
                         </div>
                     </div>
@@ -49,7 +30,7 @@
         <div class="main__list-bar">
             <div class="main__list-bar-left-container">
                 <button class="left-arrow-btn">
-                    <img class="arrow-img" src="/arrowleft_mrt-list.png" alt="">
+                    <img class="arrow-img" src="/images/arrowleft_mrt-list.png" alt="">
                 </button>
             </div>
             <div class="main__list-bar-container">
@@ -59,7 +40,7 @@
             </div>
             <div class="main__list-bar-right-container">
                 <button class="right-arrow-btn">
-                    <img class="arrow-img" src="/arrowright_mrt-list.png" alt="">
+                    <img class="arrow-img" src="/images/arrowright_mrt-list.png" alt="">
                 </button>
             </div>
         </div>
@@ -69,11 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="footer">
-        <div class="footer__container">
-            <div class="footer__text body_bold">COPYRIGHT © 2021 台北一日遊</div>
-        </div>
-    </div>
-    <script src="/index.js"></script>
-</body>
-</html>
+{% endblock %}
+{% block script_content %}
+    <script src="/js/index.js"></script>
+{% endblock %}

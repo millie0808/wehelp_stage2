@@ -1,110 +1,13 @@
 body{
-    margin: 0px;
     scroll-behavior: smooth;
-}
-input{
-    border: 0;
-    margin: 0;
-}
-button{
-    border: 0;
-    padding: 0;
-    background-color: transparent;
-    cursor: pointer;
-}
-:root{
-    --primary-color-cyan-70: #448899;
-    --primary-color-cyan-50: #6AB;
-    --primary-color-cyan-20: #ADE;
-    --secondary-color-gray-70: #666666;
-    --secondary-color-gray-50: #757575;
-    --secondary-color-gray-20: #E8E8E8;
-    --secondary-color-gray-10: #F8F8F8;
-    --additional-color-white: #FFF;
-    --additional-color-black: #000;
-    
-}
-.header{
-    width: 100%; 
-    height: 34px;
-    padding: 10px 0;
-    background: var(--additional-color-white);
-    
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    display: flex;
-    justify-content: center;
-}
-.header__container{
-    /* width: 62.5%; */
-    width: 1200px;
-    height: 34px;
-    
-    display: flex;
-    justify-content: space-between;
-}
-.header__title{
-    width: 150px;
-    height: 34px;
-    color: var(--primary-color-cyan-70);
-
-    display: flex;
-}
-.header_btn{
-    width: auto; 
-    max-width: 175px; 
-    height: auto; 
-    max-height: 34px; 
-}
-.header__btn-container{
-    width: auto; 
-    max-width: 175px; 
-    height: auto; 
-    max-height: 34px;
-
-    display: flex;
-    justify-content: space-between;
-}
-.header__btn-booking{
-    width: auto; 
-    max-width: 84px; 
-    height: 34px;
-    padding: 10px;
-}
-.header__btn-booking-text{
-    width: auto;
-    max-width: 64px;
-    height: auto;
-    max-height: 14px;
-    color: var(--secondary-color-gray-70);
-
-    display: inline-block;  /* for w and h */
-    white-space: nowrap; /* 文字不換行 */
-}
-.header__btn-login{
-    width: auto; 
-    max-width: 91px; 
-    height: 34px;
-    padding: 10px;
-}
-.header__btn-login-text{
-    width: auto;
-    max-width: 71px;
-    height: auto;
-    max-height: 14px;
-    color: var(--secondary-color-gray-70);
-
-    display: inline-block;   /* for w and h */
-    white-space: nowrap; /* 文字不換行 */
+    position: relative;
 }
 .banner{
     width: 100%;
     height: 320px;
     background: linear-gradient(135deg, var(--primary-color-cyan-20) 0%, var(--primary-color-cyan-50) 100%);
 
-    background-image: url("/welcome.png");
+    background-image: url("/images/welcome.png");
     background-repeat: no-repeat;
     background-size: cover;
     
@@ -421,41 +324,7 @@ button{
     color: var(--secondary-color-gray-50);
     text-align: right;
 }
-
-.footer{
-    width: 100%;
-    height: 104px;
-    background: var(--secondary-color-gray-50);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.footer__container{
-    width: 234px;
-    height: 14px;
-    padding: 5px 0px 5px 0px;
-
-    display: flex;
-    align-items: center;
-
-    position: relative;
-}
-.footer__text{
-    width: 234px;
-    height: 14px;
-    top: 5px;
-    color: var(--additional-color-white);
-
-    position: absolute;
-    white-space: nowrap;
-}
-
 @media (max-width:1200px){
-    .header__container{
-        width: 97%;
-        left: 10px;
-    }
     .guide{
         width: 95%;
         margin: 10px;
@@ -472,67 +341,10 @@ button{
     .main__attraction-container{
         width: calc((100% - 30px * 2)/3);
     }
-    
 }
 
 @media (max-width:600px){
     .main__attraction-container{
         width: 100%;
     }
-}
-
-
-
-.header1{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 24px;
-    letter-spacing: 0em;
-    text-align: left;
-}
-.header2{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 30px;
-    font-weight: 700; /* Bold */
-    line-height: 34px;
-    letter-spacing: 0em;
-    text-align: left;
-}
-.header3{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 24px; /* 100% */
-}
-.button_reg{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 19px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 16px; /* 84.211% */
-}
-.content_reg{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-.body_bold{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 13.3px;
-    letter-spacing: 0em;
-    text-align: left;
-}
-.body_med{
-    font-family: "Noto Sans TC", sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 500; /* Medium */
-    line-height: 13px;
-    letter-spacing: 0em;
 }

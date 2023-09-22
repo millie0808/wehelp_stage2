@@ -1,4 +1,3 @@
-const searchInput = document.querySelector(".guide__search-input");
 const attractionsGroup = document.querySelector(".main__attractions-group");
 const footer = document.querySelector(".footer");
 let isSearching = false;
@@ -111,7 +110,6 @@ function calcScrollWidth(){
     }
 }
 
-
 // List bar
 fetch('/api/mrts').then(function(response){
     return response.json()
@@ -194,13 +192,6 @@ listBarRightButton.addEventListener("click", () => {
     });
 });
 
-// Search input : Focus
-searchInput.addEventListener("focus", () => {
-    if(searchInput.value === "輸入景點名稱查詢"){
-        searchInput.value = "";
-    }
-});
-
 // Search input : Keyup enter   !!!!!!
 // searchInput.addEventListener("keyup", (event) => {
 //     if(event.key === "Enter" || event.keyCode === 13){
@@ -210,13 +201,8 @@ searchInput.addEventListener("focus", () => {
 
 // Search button
 const searchButton = document.querySelector(".guide__search-btn");
+const searchInput = document.querySelector(".guide__search-input");
 searchButton.addEventListener("click", () => {
     const inputValue = searchInput.value;
     searchForKeyword(0, inputValue);
 });
-
-// Header title
-const headerTitle = document.querySelector(".header__title");
-headerTitle.addEventListener("click", () => {
-    window.location.href = "/";
-})

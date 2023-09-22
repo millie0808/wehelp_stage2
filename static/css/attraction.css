@@ -170,7 +170,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     height: 100%;
     padding: 0;
     color: var(--additional-color-black);
-    background: url('/calendar.png') right / 24px 24px no-repeat;
+    background: url('/images/calendar.png') right / 24px 24px no-repeat;
 }
 .section__profile-booking-time-container{
     display: inline-flex;
