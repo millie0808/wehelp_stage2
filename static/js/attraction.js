@@ -79,7 +79,12 @@ function handleImgsTrans(direction=none){
 fetch(attractionIdApiURL).then(response => {
     return response.json();
 }).then(attractionJSON => {
-    createPageContent(attractionJSON);
+    if(attractionJSON.data){
+        createPageContent(attractionJSON);
+    }
+    if(attractionJSON.error){
+        window.location.href = '/';
+    }
 });
 
 // imgs scroll 
