@@ -45,8 +45,7 @@ signInUpButton.addEventListener("click", () => {
 const signOutButton = document.querySelector(".header__btn-logout");
 signOutButton.addEventListener("click", () => {
     localStorage.removeItem('token');
-    const pathname = window.location.pathname;
-    window.location.href = pathname;
+    window.location.reload();
 })
 
 // 登入區塊
@@ -140,8 +139,7 @@ signInForm.addEventListener("submit", (event) => {
         }
         if(result.token){
             localStorage.setItem('token', result.token);
-            const pathname = window.location.pathname;
-            window.location.href = pathname;
+            window.location.reload();
         }
     })
 })
