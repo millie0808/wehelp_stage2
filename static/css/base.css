@@ -212,6 +212,9 @@ dialog::backdrop{
 }
 .sign-jumps button{
     color: var(--secondary-color-gray-70);
+    line-height: normal;
+    padding-block: 0px;
+    padding-inline: 0px;
 }
 .sign-jumps span{
     line-height: normal;
