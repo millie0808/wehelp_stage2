@@ -115,16 +115,6 @@ dialog::backdrop{
     padding: 10px;
     color: var(--secondary-color-gray-70);
 }
-.header__btn-logout-text{
-    width: auto;
-    max-width: 64px;
-    height: auto;
-    max-height: 14px;
-    color: var(--secondary-color-gray-70);
-
-    display: inline-block;  /* for w and h */
-    white-space: nowrap; /* 文字不換行 */
-}
 .signup{
     width: 340px;
     height: fit-content;
@@ -219,10 +209,12 @@ dialog::backdrop{
     height: 22px;
     color: var(--secondary-color-gray-70);
     text-align: center;
-    display: inline;
 }
 .sign-jumps button{
     color: var(--secondary-color-gray-70);
+}
+.sign-jumps span{
+    line-height: normal;
 }
 .signin{
     width: 340px;
