@@ -1,21 +1,32 @@
 // check Authorization
 const token = localStorage.getItem('token');
-fetch('/api/user/auth', {
-    method: 'GET',
-    headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    }
-}).then((response) => {
-    return response.json();
-}).then((authorizationResult) => {
-    if(authorizationResult){
-        signOutButton.classList.remove("none");
-    }
-    else{
-        signInUpButton.classList.remove("none");
-    }
-})
+let GLOBAL_username = null;
+async function checkAuthorization(){
+    await fetch('/api/user/auth', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => {
+        return response.json();
+    }).then((authorizationResult) => {
+        if(authorizationResult){
+            signOutButton.classList.remove("none");
+            GLOBAL_username = authorizationResult.data.name;
+            bookingButton.addEventListener("click", () => {
+                window.location.href = '/booking';
+            })
+        }
+        else{
+            signInUpButton.classList.remove("none");
+            bookingButton.addEventListener("click", () => {
+                popSignInUp();
+            })
+        }
+    })
+}
+checkAuthorization();
 
 // Header title
 const headerTitle = document.querySelector(".header__title");
@@ -38,15 +49,18 @@ allInput.forEach(function(input){
 const signInUpButton = document.querySelector(".header__btn-login");
 const signIn = document.querySelector(".signin");
 const signUp = document.querySelector(".signup");
-signInUpButton.addEventListener("click", () => {
+function popSignInUp(){
     signIn.showModal();
-})
+}
+signInUpButton.addEventListener("click", popSignInUp);
 // 登出 Button
 const signOutButton = document.querySelector(".header__btn-logout");
 signOutButton.addEventListener("click", () => {
     localStorage.removeItem('token');
     window.location.reload();
 })
+// 預定行程 Button
+const bookingButton = document.querySelector(".header__btn-booking");
 
 // 登入區塊
     // close
