@@ -93,6 +93,32 @@ const imgsRightButton = document.querySelector(".right-arrow-btn");
 imgsLeftButton.addEventListener("click", () => handleImgsTrans(direction='left'));
 imgsRightButton.addEventListener("click", () => handleImgsTrans(direction='right'));
 
+function handle_date_format(date){
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// date min (today)
+const dateInput = document.querySelector("#date");
+const now = new Date();
+const hour = now.getHours();
+if(hour < 9){
+    dateInput.min = handle_date_format(now);
+}
+else if(hour < 13){
+    dateInput.min = handle_date_format(now);
+    if(dateInput.value === handle_date_format(now)){
+        morningRadio.disabled = true;
+    }
+}
+else{
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    dateInput.min = handle_date_format(tomorrow);
+}
+
 
 // time 
 const morningRadio = document.getElementById("morning");
@@ -103,4 +129,32 @@ morningRadio.addEventListener("change", () => {
 })
 afternoonRadio.addEventListener("change", () => {
     priceElem.textContent = "新台幣 2500 元";    
+})
+
+// start booking Button
+const startBookingForm = document.querySelector("#start_booking");
+startBookingForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const selectedTimeRadio = document.querySelector('input[type="radio"][name="time"]:checked');
+    fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "attractionID": Number(pathname.slice(12)),
+            "date": dateInput.value,
+            "time": selectedTimeRadio.value
+        })
+    }).then(response => {
+        if(response.status === 403){
+            popSignInUp();
+        }
+        return response.json();
+    }).then(result => {
+        if(result.ok){
+            window.location.href = '/booking';
+        }
+    })
 })
