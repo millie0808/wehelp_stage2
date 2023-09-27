@@ -149,7 +149,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: var(--secondary-color-gray-70);
 
     display: grid;
-    grid-template-rows:22px 15px min-content 15px 35px 15px 22px 15px 22px 25px 36px;
+    grid-template-rows:22px 15px min-content 15px 170px;
+}
+#start_booking{
+    display: grid;
+    grid-template-rows: 35px 15px 22px 15px 22px 25px 36px;
 }
 .section__profile-booking-date-container{
     display: inline-flex;
