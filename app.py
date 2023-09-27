@@ -1,4 +1,8 @@
 from flask import *
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import sessionmaker, joinedload
+from sqlalchemy.exc import SQLAlchemyError
 from mysql.connector.pooling import MySQLConnectionPool
 import re
 import jwt
@@ -14,6 +18,11 @@ app = Flask(
     static_folder = "static",
     static_url_path = "/"
 )
+# SQLAlchemy connection
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:rootpass@localhost/taipei_day_trip'
+db = SQLAlchemy(app)
+engine = create_engine('mysql+pymysql://root:rootpass@localhost/taipei_day_trip')
+Session = sessionmaker(bind=engine)
 
 db_config = {
     "host": "localhost",
@@ -30,8 +39,70 @@ connection_pool = MySQLConnectionPool(
 
 # MySQL Views: attraction_data
 
+# SQLAlchemy
+class Mrt(db.Model):
+    __tablename__ = 'mrt'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255))
+
+class Category(db.Model):
+    __tablename__ = 'category'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255))
+
+class Attraction(db.Model):
+	__tablename__ = 'attraction'
+	
+	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	name = db.Column(db.String(255))
+	cat_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+	description = db.Column(db.Text)
+	address = db.Column(db.String(255))
+	transport = db.Column(db.String(512))
+	mrt_id = db.Column(db.Integer, db.ForeignKey('mrt.id'))
+	lat = db.Column(db.Float)
+	lng = db.Column(db.Float)
+
+class Image(db.Model):
+    __tablename__ = 'image'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    url = db.Column(db.String(255))
+    attn_id = db.Column(db.Integer, db.ForeignKey('attraction.id'), nullable=False)
+
+class User(db.Model):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+ 
+class BookingTime(db.Model):
+    __tablename__ = 'booking_time'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    time = db.Column(db.String(255))
+    price = db.Column(db.Integer)
+
+class Booking(db.Model):
+    __tablename__ = 'booking'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    attn_id = db.Column(db.Integer, db.ForeignKey('attraction.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    time_id = db.Column(db.Integer, db.ForeignKey('booking_time.id'), nullable=False)
+    created_at = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
+
 # Global variables
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
+time_mapping = {
+    'morning': 1,
+    'afternoon': 2
+}
 
 # jwt 密鑰
 def generate_random_string(length):
@@ -40,7 +111,8 @@ def generate_random_string(length):
     # 使用隨機函數生成指定長度的隨機字符串
     random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string
-SECRET_KEY = generate_random_string(10)
+# SECRET_KEY = generate_random_string(10)
+SECRET_KEY = 'adiwnonrijf;oiwjfi'
 
 # Functions
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False, rowcount=False):
@@ -168,15 +240,57 @@ def generate_jwt_token(user_data):
     return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
 def verify_jwt_token(token):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        return payload
-    except jwt.ExpiredSignatureError:
-        # Token已過期
-        return None
-    except jwt.InvalidTokenError:
-        # Token無效
-        return None
+	try:
+		payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+		return payload
+	except jwt.ExpiredSignatureError:
+		# Token已過期
+		return None
+	except jwt.InvalidTokenError:
+		# Token無效
+		return None
+
+def get_booking_data(user_id):
+	session = Session()
+	booking_data = session.query(Booking, Attraction, BookingTime, Image).\
+		outerjoin(Attraction, Booking.attn_id == Attraction.id).\
+		outerjoin(BookingTime, Booking.time_id == BookingTime.id).\
+		outerjoin(Image, Image.attn_id == Attraction.id).\
+		filter(Booking.user_id == user_id).first()
+	if booking_data != None:
+		booking, attraction, booking_time, image = booking_data
+		return_data = {
+			"attraction": {
+				"id": booking.attn_id,
+				"name": attraction.name,
+				"address": attraction.address,
+				"image": image.url
+				},
+			"date": booking.date.strftime('%Y-%m-%d'),
+			"time": booking_time.time,
+			"price": booking_time.price
+		}
+	else:
+		return_data = None
+	return return_data
+
+def insert_into_booking(user_id, data):
+	session = Session()
+	# 刪除
+	old_booking = session.query(Booking).filter_by(user_id=user_id).first()
+	if old_booking:
+		session.delete(old_booking)
+	# 新增
+	time_id = time_mapping.get(data['time'], -1)
+	new_booking = Booking(attn_id=data['attractionID'], user_id=user_id, date=data['date'], time_id=time_id)
+	session.add(new_booking)
+	session.commit()
+
+def delete_booking(user_id):
+	session = Session()
+	booking = session.query(Booking).filter_by(user_id=user_id).first()
+	session.delete(booking)
+	session.commit()
 
 # Pages
 @app.route("/")
@@ -291,8 +405,32 @@ def api_user_auth():
 	except:
 		return api_error("伺服器內部錯誤", 500)
 
-
-
+@app.route("/api/booking", methods=['GET', 'POST', 'DELETE'])
+def api_booking():
+	try:
+		authorization_header = request.headers.get('Authorization')
+		if authorization_header and authorization_header.startswith('Bearer '):
+			token = authorization_header.split(' ')[1]
+		decoded_payload = verify_jwt_token(token)
+		if decoded_payload:
+			user_id = decoded_payload['id']
+			if request.method == 'GET':
+				booking_data = get_booking_data(user_id)
+				return jsonify({"data": booking_data})
+			if request.method == 'POST':
+				new_booking_data = request.get_json()
+				try:
+					insert_into_booking(user_id, new_booking_data)
+					return jsonify({"ok": True})
+				except:
+					return api_error("建立失敗", 400)
+			if request.method == 'DELETE':
+				delete_booking(user_id)
+				return jsonify({"ok": True})
+		else:
+			return api_error("未登入系統", 403)
+	except:
+		return api_error("伺服器內部錯誤", 500)
 
 
 
