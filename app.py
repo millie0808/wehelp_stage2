@@ -18,19 +18,21 @@ app = Flask(
     static_folder = "static",
     static_url_path = "/"
 )
+app.secret_key = 'eovnlfnlonlkjmflo'
+
 # SQLAlchemy connection
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:rootpass@localhost/taipei_day_trip'
 db = SQLAlchemy(app)
 engine = create_engine('mysql+pymysql://root:rootpass@localhost/taipei_day_trip')
 Session = sessionmaker(bind=engine)
 
+# MySQL connection
 db_config = {
     "host": "localhost",
     "database": "taipei_day_trip",
     "user": "root",
     "password": "rootpass",
 }
-
 connection_pool = MySQLConnectionPool(
     pool_name = "my_connection_pool",
     pool_size = 5,
@@ -100,8 +102,8 @@ class Booking(db.Model):
 # Global variables
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
 time_mapping = {
-    'morning': 1,
-    'afternoon': 2
+    'morning': 2000,
+    'afternoon': 2500
 }
 
 # jwt 密鑰
@@ -261,47 +263,99 @@ def verify_jwt_token(token):
 		# Token無效
 		return None
 
-def get_booking_data(user_id):
-	session = Session()
-	booking_data = session.query(Booking, Attraction, BookingTime, Image).\
-		outerjoin(Attraction, Booking.attn_id == Attraction.id).\
-		outerjoin(BookingTime, Booking.time_id == BookingTime.id).\
-		outerjoin(Image, Image.attn_id == Attraction.id).\
-		filter(Booking.user_id == user_id).first()
-	if booking_data != None:
-		booking, attraction, booking_time, image = booking_data
-		return_data = {
+# def get_booking_data(user_id):
+# 	db_session = Session()
+# 	booking_data = db_session.query(Booking, Attraction, BookingTime, Image).\
+# 		outerjoin(Attraction, Booking.attn_id == Attraction.id).\
+# 		outerjoin(BookingTime, Booking.time_id == BookingTime.id).\
+# 		outerjoin(Image, Image.attn_id == Attraction.id).\
+# 		filter(Booking.user_id == user_id).first()
+# 	if booking_data != None:
+# 		booking, attraction, booking_time, image = booking_data
+# 		return_data = {
+# 			"attraction": {
+# 				"id": booking.attn_id,
+# 				"name": attraction.name,
+# 				"address": attraction.address,
+# 				"image": image.url
+# 				},
+# 			"date": booking.date.strftime('%Y-%m-%d'),
+# 			"time": booking_time.time,
+# 			"price": booking_time.price
+# 		}
+# 	else:
+# 		return_data = None
+# 	return return_data
+
+# def insert_into_booking(user_id, data):
+# 	db_session = Session()
+# 	# 刪除
+# 	old_booking = db_session.query(Booking).filter_by(user_id=user_id).first()
+# 	if old_booking:
+# 		db_session.delete(old_booking)
+# 	# 新增
+# 	time_id = time_mapping.get(data['time'], -1)
+# 	new_booking = Booking(attn_id=data['attractionID'], user_id=user_id, date=data['date'], time_id=time_id)
+# 	db_session.add(new_booking)
+# 	db_session.commit()
+
+def init_cart():
+    if 'carts' not in session:
+        session['carts'] = {}
+
+def get_cart(user_id):
+	init_cart()
+	if user_id in session['carts']:
+		db_session = Session()
+		attraction_data = db_session.query(Attraction.name, Attraction.address, Image.url).\
+			outerjoin(Image, Image.attn_id == Attraction.id).\
+			filter(Attraction.id == session['carts'][user_id]['attn_id']).first()
+		attn_name, attn_address, attn_image = attraction_data
+		booking_data = {
 			"attraction": {
-				"id": booking.attn_id,
-				"name": attraction.name,
-				"address": attraction.address,
-				"image": image.url
-				},
-			"date": booking.date.strftime('%Y-%m-%d'),
-			"time": booking_time.time,
-			"price": booking_time.price
+				"id": session['carts'][user_id]['attn_id'],
+				"name": attn_name,
+				"address": attn_address,
+				"image": attn_image
+			},
+			"date": session['carts'][user_id]['date'],
+			"time": session['carts'][user_id]['time'],
+			"price": time_mapping.get(session['carts'][user_id]['time'])
 		}
 	else:
-		return_data = None
-	return return_data
+		booking_data = None
+	return booking_data
 
-def insert_into_booking(user_id, data):
-	session = Session()
-	# 刪除
-	old_booking = session.query(Booking).filter_by(user_id=user_id).first()
-	if old_booking:
-		session.delete(old_booking)
-	# 新增
-	time_id = time_mapping.get(data['time'], -1)
-	new_booking = Booking(attn_id=data['attractionID'], user_id=user_id, date=data['date'], time_id=time_id)
-	session.add(new_booking)
-	session.commit()
+def add_to_cart(user_id, data):
+	init_cart()
+	# trip_id = f"{data['attractionID']}-{data['date']}-{data['time']}"
+	if user_id not in session['carts']:
+		session['carts'][user_id] = {}
+	session['carts'][user_id] = {
+		'attn_id': data['attractionID'],
+		'date': data['date'],
+		'time': data['time']
+	}
+	session.modified = True
+	# if trip_id not in session['carts'][user_id]:
+	# 	session['carts'][user_id][trip_id] = {
+	# 		'attn_id': data['attractionID'],
+	# 		'date': data['date'],
+	# 		'time': data['time']
+	# 	}
+	# 	session.modified = True
 
-def delete_booking(user_id):
-	session = Session()
-	booking = session.query(Booking).filter_by(user_id=user_id).first()
-	session.delete(booking)
-	session.commit()
+def remove_from_cart(user_id):
+	init_cart()
+	if user_id in session['carts']:
+		del session['carts'][user_id]
+		session.modified = True
+
+# def delete_booking(user_id):
+# 	db_session = Session()
+# 	booking = db_session.query(Booking).filter_by(user_id=user_id).first()
+# 	db_session.delete(booking)
+# 	db_session.commit()
 
 # Pages
 @app.route("/")
@@ -418,8 +472,9 @@ def check_authorization():
 def get_booking():
 	user_data = get_decoded_user_data()
 	if user_data:
-		user_id = user_data['id']
-		booking_data = get_booking_data(user_id)
+		user_id = str(user_data['id'])
+		# booking_data = get_booking_data(user_id)
+		booking_data = get_cart(user_id)
 		return jsonify({"data": booking_data})
 	else:
 		return api_error("未登入系統", 403)
@@ -430,10 +485,10 @@ def create_new_booking():
 	try:
 		user_data = get_decoded_user_data()
 		if user_data:
-			user_id = user_data['id']
+			user_id = str(user_data['id'])
 			new_booking_data = request.get_json()
 			try:
-				insert_into_booking(user_id, new_booking_data)
+				add_to_cart(user_id, new_booking_data)
 				return jsonify({"ok": True})
 			except:
 				return api_error("建立失敗", 400)
@@ -446,8 +501,9 @@ def create_new_booking():
 def delete_booking():
 	user_data = get_decoded_user_data()
 	if user_data:
-		user_id = user_data['id']
-		delete_booking(user_id)
+		user_id = str(user_data['id'])
+		# delete_booking(user_id)
+		remove_from_cart(user_id)
 		return jsonify({"ok": True})
 	else:
 		return api_error("未登入系統", 403)
