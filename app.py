@@ -239,6 +239,17 @@ def generate_jwt_token(user_data):
 	}
     return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
+def get_token(auth_header):
+	if auth_header and auth_header.startswith('Bearer '):
+		token = auth_header.split(' ')[1]
+		return token
+
+def get_decoded_user_data():
+	authorization_header = request.headers.get('Authorization')
+	token = get_token(authorization_header)
+	decoded_payload = verify_jwt_token(token)
+	return decoded_payload
+
 def verify_jwt_token(token):
 	try:
 		payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
@@ -397,41 +408,49 @@ def login():
 
 @app.route("/api/user/auth", methods=['GET'])
 def check_authorization():
-	authorization_header = request.headers.get('Authorization')
-	if authorization_header and authorization_header.startswith('Bearer '):
-		token = authorization_header.split(' ')[1]
-	decoded_payload = verify_jwt_token(token)
-	if decoded_payload:
-		return jsonify({"data": decoded_payload})
+	user_data = get_decoded_user_data()
+	if user_data:
+		return jsonify({"data": user_data})
 	else:
 		return jsonify(None)
 
-@app.route("/api/booking", methods=['GET', 'POST', 'DELETE'])
-def api_booking():
+@app.route("/api/booking", methods=['GET'])
+def get_booking():
+	user_data = get_decoded_user_data()
+	if user_data:
+		user_id = user_data['id']
+		booking_data = get_booking_data(user_id)
+		return jsonify({"data": booking_data})
+	else:
+		return api_error("未登入系統", 403)
+
+
+@app.route("/api/booking", methods=['POST'])
+def create_new_booking():
 	try:
-		authorization_header = request.headers.get('Authorization')
-		if authorization_header and authorization_header.startswith('Bearer '):
-			token = authorization_header.split(' ')[1]
-		decoded_payload = verify_jwt_token(token)
-		if decoded_payload:
-			user_id = decoded_payload['id']
-			if request.method == 'GET':
-				booking_data = get_booking_data(user_id)
-				return jsonify({"data": booking_data})
-			if request.method == 'POST':
-				new_booking_data = request.get_json()
-				try:
-					insert_into_booking(user_id, new_booking_data)
-					return jsonify({"ok": True})
-				except:
-					return api_error("建立失敗", 400)
-			if request.method == 'DELETE':
-				delete_booking(user_id)
+		user_data = get_decoded_user_data()
+		if user_data:
+			user_id = user_data['id']
+			new_booking_data = request.get_json()
+			try:
+				insert_into_booking(user_id, new_booking_data)
 				return jsonify({"ok": True})
+			except:
+				return api_error("建立失敗", 400)
 		else:
 			return api_error("未登入系統", 403)
 	except:
 		return api_error("伺服器內部錯誤", 500)
+
+@app.route("/api/booking", methods=['DELETE'])
+def delete_booking():
+	user_data = get_decoded_user_data()
+	if user_data:
+		user_id = user_data['id']
+		delete_booking(user_id)
+		return jsonify({"ok": True})
+	else:
+		return api_error("未登入系統", 403)
 
 
 
