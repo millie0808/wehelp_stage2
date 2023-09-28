@@ -377,33 +377,34 @@ def api_user():
 	except:
 		return api_error("伺服器內部錯誤", 500)
 
-@app.route("/api/user/auth", methods=['PUT', 'GET'])
-def api_user_auth():
+@app.route("/api/user/auth", methods=['PUT'])
+def login():
 	try:
-		if request.method == 'PUT':
-			data = request.get_json()
-			email = data['email']
-			password = data['password']
-			if is_valid_email(email):
-				signin_result = check_signin(email, password)
-				if signin_result:
-					jwt_token = generate_jwt_token(signin_result)
-					return jsonify({"token": jwt_token})
-				else:
-					return api_error("登入失敗，帳號密碼錯誤", 400)
+		data = request.get_json()
+		email = data['email']
+		password = data['password']
+		if is_valid_email(email):
+			signin_result = check_signin(email, password)
+			if signin_result:
+				jwt_token = generate_jwt_token(signin_result)
+				return jsonify({"token": jwt_token})
 			else:
-				return api_error("登入失敗，email格式錯誤", 400)
-		if request.method == 'GET':
-			authorization_header = request.headers.get('Authorization')
-			if authorization_header and authorization_header.startswith('Bearer '):
-				token = authorization_header.split(' ')[1]
-			decoded_payload = verify_jwt_token(token)
-			if decoded_payload:
-				return jsonify({"data": decoded_payload})
-			else:
-				return jsonify(None)
+				return api_error("登入失敗，帳號密碼錯誤", 400)
+		else:
+			return api_error("登入失敗，email格式錯誤", 400)
 	except:
 		return api_error("伺服器內部錯誤", 500)
+
+@app.route("/api/user/auth", methods=['GET'])
+def check_authorization():
+	authorization_header = request.headers.get('Authorization')
+	if authorization_header and authorization_header.startswith('Bearer '):
+		token = authorization_header.split(' ')[1]
+	decoded_payload = verify_jwt_token(token)
+	if decoded_payload:
+		return jsonify({"data": decoded_payload})
+	else:
+		return jsonify(None)
 
 @app.route("/api/booking", methods=['GET', 'POST', 'DELETE'])
 def api_booking():
