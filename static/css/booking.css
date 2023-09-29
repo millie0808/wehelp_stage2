@@ -211,4 +211,9 @@ input[name=booking-payment]{
         box-sizing: border-box;
         padding: 0 10px;
     }
+    .no-booking{
+        width: 100%;
+        box-sizing: border-box;
+        padding-left: 10px;
+    }
 }
