@@ -3,6 +3,7 @@ body{
     height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 input{
     border: 0;
@@ -51,7 +52,7 @@ dialog::backdrop{
     --error-red: #ff3333;
 }
 .none{
-    display: none;
+    display: none !important;
 }
 
 .header{

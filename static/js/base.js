@@ -1,6 +1,6 @@
 // check Authorization
 const token = localStorage.getItem('token');
-let GLOBAL_username = null;
+let GLOBAL_userdata = null;
 async function checkAuthorization(){
     await fetch('/api/user/auth', {
         method: 'GET',
@@ -13,7 +13,7 @@ async function checkAuthorization(){
     }).then((authorizationResult) => {
         if(authorizationResult){
             signOutButton.classList.remove("none");
-            GLOBAL_username = authorizationResult.data.name;
+            GLOBAL_userdata = authorizationResult.data;
             bookingButton.addEventListener("click", () => {
                 window.location.href = '/booking';
             })

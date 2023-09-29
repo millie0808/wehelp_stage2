@@ -20,10 +20,11 @@ fetch('/api/booking', {
 const username = document.querySelector("#headline-username");
 async function showUsername(){
     await checkAuthorization();
-    username.textContent = GLOBAL_username;
+    username.textContent = GLOBAL_userdata.name;
 }
 showUsername();
 
+const bookingExisted = document.querySelector(".booking-existed");
 const attractionName = document.querySelector("#order-attraction-name");
 const attractionImg = document.querySelector(".order__img");
 const bookingDate = document.querySelector("#order-booking-date");
@@ -31,7 +32,10 @@ const bookingTime = document.querySelector("#order-booking-time");
 const bookingPrice = document.querySelector("#order-booking-price");
 const attractionAddress = document.querySelector("#order-attraction-address");
 const bookingTotalPrice = document.querySelector("#confirm-total-price");
+const contactNameInput = document.querySelector("#contact-name");
+const contactEmailInput = document.querySelector("#contact-email");
 function fillDataIn(data){
+    bookingExisted.classList.remove("none");
     attractionImg.src = data.attraction.image;
     attractionName.textContent = data.attraction.name;
     bookingDate.textContent = data.date;
@@ -45,29 +49,18 @@ function fillDataIn(data){
     const address = data.attraction.address.slice(0, 3)+" "+data.attraction.address.slice(3);
     attractionAddress.textContent = address;
     bookingTotalPrice.textContent = "新台幣 " + data.price + " 元";
+    contactNameInput.value = GLOBAL_userdata.name;
+    contactEmailInput.value = GLOBAL_userdata.email;
 }
 
 const body = document.body;
-const previewDiv = document.querySelector(".preview");
-const orderDiv = document.querySelector(".order");
-const mainSeparators = document.querySelectorAll(".separator_main");
-const contactDiv = document.querySelector(".contact");
-const paymentDiv = document.querySelector(".payment");
-const confirmDiv = document.querySelector(".confirm");
-function createEmptyBookingPage(){
-    previewDiv.removeChild(orderDiv);
-    mainSeparators.forEach(mainSeparator => {
-        body.removeChild(mainSeparator);
-    })
-    body.removeChild(contactDiv);
-    body.removeChild(paymentDiv);
-    body.removeChild(confirmDiv);
-    
+const footer = document.querySelector(".footer");
+function createEmptyBookingPage(){    
     const noBookingSpan = document.createElement("span");
     noBookingSpan.classList.add("no-booking");
     noBookingSpan.classList.add("body_med");
     noBookingSpan.textContent = "目前沒有任何待預定的行程";
-    previewDiv.appendChild(noBookingSpan);
+    body.insertBefore(noBookingSpan, footer);
 }
 
 const deleteBookingButton = document.querySelector(".order__info_delete");
