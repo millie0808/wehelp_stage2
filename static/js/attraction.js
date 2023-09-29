@@ -150,11 +150,14 @@ startBookingForm.addEventListener("submit", (event) => {
     }).then(response => {
         if(response.status === 403){
             popSignInUp();
+            throw new Error('未登入');
         }
         return response.json();
     }).then(result => {
         if(result.ok){
             window.location.href = '/booking';
         }
+    }).catch(error => {
+        console.log(error);
     })
 })
