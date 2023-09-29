@@ -85,7 +85,7 @@
 }
 .contact{
     width: 100%;
-    height: 307px;
+    height: auto;
     box-sizing: border-box;
     padding: 40px 0;
     display: flex;
@@ -177,17 +177,19 @@ input[name=booking-payment]{
 
 
 @media (max-width:1200px){
-    .preview{
-        max-height: 557px;
-    }
     .headline{
         width: 100%;
         padding: 6px 10px 5px 10px;
     }
+    .preview{
+        max-height: 557px;
+        padding: 0;
+    }
     .order{
         width: 100%;
+        height: auto;
+        box-sizing: border-box;
         padding: 28px 10px 30px 10px;
-        height: 486px;
         flex-direction: column;
         gap: 28px;
     }
@@ -210,6 +212,9 @@ input[name=booking-payment]{
         width: 100%;
         box-sizing: border-box;
         padding: 0 10px;
+    }
+    .confirm{
+        padding: 40px 10px;
     }
     .no-booking{
         width: 100%;
