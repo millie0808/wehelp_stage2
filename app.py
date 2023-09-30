@@ -1,106 +1,45 @@
 from flask import *
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, func
+from models import *
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, joinedload
-from sqlalchemy.exc import SQLAlchemyError
+# from sqlalchemy.exc import SQLAlchemyError
 from mysql.connector.pooling import MySQLConnectionPool
 import re
 import jwt
 import random
 import string
 
-app=Flask(__name__)
-app.config["JSON_AS_ASCII"]=False
-app.config["TEMPLATES_AUTO_RELOAD"]=True
-app.config["JSON_SORT_KEYS"] = False
 app = Flask(
     __name__,
     static_folder = "static",
     static_url_path = "/"
 )
-app.secret_key = 'eovnlfnlonlkjmflo'
+# 加載config文件
+app.config.from_object("config")
 
 # SQLAlchemy connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:rootpass@localhost/taipei_day_trip'
-db = SQLAlchemy(app)
-engine = create_engine('mysql+pymysql://root:rootpass@localhost/taipei_day_trip')
+db.init_app(app)
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'] )
 Session = sessionmaker(bind=engine)
 
 # MySQL connection
 db_config = {
-    "host": "localhost",
-    "database": "taipei_day_trip",
-    "user": "root",
-    "password": "rootpass",
+    "host": app.config['DATABASE_HOST'],
+    "database": app.config['DATABASE_NAME'],
+    "user": app.config['DATABASE_USER'],
+    "password": app.config['DATABASE_PASSWORD'],
 }
 connection_pool = MySQLConnectionPool(
     pool_name = "my_connection_pool",
-    pool_size = 5,
+    pool_size = app.config['CONNECTION_POOL_SIZE'],
     **db_config
 )
-
 # MySQL Views: attraction_data
 
-# SQLAlchemy
-class Mrt(db.Model):
-    __tablename__ = 'mrt'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255))
-
-class Category(db.Model):
-    __tablename__ = 'category'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255))
-
-class Attraction(db.Model):
-	__tablename__ = 'attraction'
-	
-	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-	name = db.Column(db.String(255))
-	cat_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-	description = db.Column(db.Text)
-	address = db.Column(db.String(255))
-	transport = db.Column(db.String(512))
-	mrt_id = db.Column(db.Integer, db.ForeignKey('mrt.id'))
-	lat = db.Column(db.Float)
-	lng = db.Column(db.Float)
-
-class Image(db.Model):
-    __tablename__ = 'image'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    url = db.Column(db.String(255))
-    attn_id = db.Column(db.Integer, db.ForeignKey('attraction.id'), nullable=False)
-
-class User(db.Model):
-    __tablename__ = 'user'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
-    password = db.Column(db.String(255), nullable=False)
- 
-class BookingTime(db.Model):
-    __tablename__ = 'booking_time'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    time = db.Column(db.String(255))
-    price = db.Column(db.Integer)
-
-class Booking(db.Model):
-    __tablename__ = 'booking'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    attn_id = db.Column(db.Integer, db.ForeignKey('attraction.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    time_id = db.Column(db.Integer, db.ForeignKey('booking_time.id'), nullable=False)
-    created_at = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
 
 # Global variables
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
+JWT_SECRET_KEY = 'adiwnonrijf;oiwjfi'
 time_mapping = {
     'morning': 2000,
     'afternoon': 2500
@@ -113,8 +52,7 @@ def generate_random_string(length):
     # 使用隨機函數生成指定長度的隨機字符串
     random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string
-# SECRET_KEY = generate_random_string(10)
-SECRET_KEY = 'adiwnonrijf;oiwjfi'
+# JWT_SECRET_KEY = generate_random_string(10)
 
 # Functions
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False, rowcount=False):
@@ -239,7 +177,7 @@ def generate_jwt_token(user_data):
 		'name': user_data['name'],
 		'email': user_data['email']
 	}
-    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
 
 def get_token(auth_header):
 	if auth_header and auth_header.startswith('Bearer '):
@@ -254,7 +192,7 @@ def get_decoded_user_data():
 
 def verify_jwt_token(token):
 	try:
-		payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+		payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
 		return payload
 	except jwt.ExpiredSignatureError:
 		# Token已過期
