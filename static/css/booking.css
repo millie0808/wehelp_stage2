@@ -206,7 +206,8 @@ input[name=booking-payment]{
         right: 10px;
     }
     .separator_main{
-        width: 340px;
+        width: calc(100% - 20px);
+        margin: 0 10px;
     }
     .contact__container, .payment__container{
         width: 100%;
