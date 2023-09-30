@@ -104,14 +104,22 @@ function handle_date_format(date){
 const dateInput = document.querySelector("#date");
 const now = new Date();
 const hour = now.getHours();
+const morningSpan = document.querySelector("#morning-span");
 if(hour < 9){
     dateInput.min = handle_date_format(now);
 }
 else if(hour < 13){
     dateInput.min = handle_date_format(now);
-    if(dateInput.value === handle_date_format(now)){
-        morningRadio.disabled = true;
-    }
+    dateInput.addEventListener("input", () => {
+        if(dateInput.value === handle_date_format(now)){
+            morningRadio.disabled = true;
+            morningSpan.style.color = 'var(--secondary-color-gray-10)';
+        }
+        else{
+            morningRadio.disabled = false;
+            morningSpan.style.color = 'var(--secondary-color-gray-70)';
+        }
+    })
 }
 else{
     const tomorrow = new Date();
