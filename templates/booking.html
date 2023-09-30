@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block css_content %}
+<link rel="stylesheet" type="text/css" href="/css/booking.css">
+{% endblock %}
+{% block main_content %}
+    <div class="separator_nav"></div>
+    <div class="headline">
+        <div class="button_bold">您好，</div>
+        <div class="button_bold" id="headline-username"></div>
+        <div class="button_bold">，待預訂的行程如下：</div>
+    </div>
+    <div class="booking-existed none">
+        <div class="preview">
+            <div class="order">
+                <img class="order__img" >
+                <div class="order__info">
+                    <div class="order__info_title body_bold">
+                        <span>台北一日遊：</span>
+                        <span id="order-attraction-name"></span>
+                    </div>
+                    <div></div>
+                    <div class="order__info_date">
+                        <span class="body_bold">日期：</span>
+                        <span class="body_med" id="order-booking-date"></span>
+                    </div>
+                    <div></div>
+                    <div class="order__info_time">
+                        <span class="body_bold">時間：</span>
+                        <span class="body_med" id="order-booking-time"></span>
+                    </div>
+                    <div></div>
+                    <div class="order__info_price">
+                        <span class="body_bold">費用：</span>
+                        <span class="body_med" id="order-booking-price"></span>
+                    </div>
+                    <div></div>
+                    <div class="order__info_address">
+                        <span class="body_bold">地點：</span>
+                        <span class="body_med" id="order-attraction-address"></span>
+                    </div>
+                    <button class="order__info_delete">
+                        <img src="/images/delete.png" >
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="separator_main"></div>
+        <div class="contact">
+            <div class="contact__container">
+                <span class="contact__title button_bold">您的聯絡資訊</span>
+                <div></div>
+                <div class="contact__name body_med">
+                    <span>聯絡姓名：</span>
+                    <input type="text" name="booking-contact" id="contact-name">
+                </div>
+                <div></div>
+                <div class="contact__email body_med">
+                    <span>聯絡信箱：</span>
+                    <input type="email" name="booking-contact" id="contact-email">
+                </div>
+                <div></div>
+                <div class="contact__cellphone body_med">
+                    <span>手機號碼：</span>
+                    <input type="tel" name="booking-contact" id="">
+                </div>
+                <div></div>
+                <span class="contact__reminder content_bold">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</span>
+            </div>
+        </div>
+        <div class="separator_main"></div>
+        <div class="payment">
+            <div class="payment__container">
+                <span class="payment__title button_bold">信用卡付款資訊</span>
+                <div></div>
+                <div class="payment__card body_med">
+                    <span>卡片號碼：</span>
+                    <input type="text" name="booking-payment" id="" placeholder="**** **** **** ****">
+                </div>
+                <div></div>
+                <div class="payment__expired body_med">
+                    <span>過期時間：</span>
+                    <input type="text" name="booking-payment" id="" placeholder="MM/YY">
+                </div>
+                <div></div>
+                <div class="payment__cvv body_med">
+                    <span>驗證密碼：</span>
+                    <input type="text" name="booking-payment" id="" placeholder="CVV">
+                </div>
+            </div>
+        </div>
+        <div class="separator_main"></div>
+        <div class="confirm">
+            <div class="confirm__container">
+                <div class="confirm__total-price body_bold">
+                    <span>總價：</span>
+                    <span id="confirm-total-price"></span>
+                </div>
+                <button class="confirm__btn button_reg">
+                    <span>確認訂購並付款</span>
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script_content %}
+    <script src="/js/booking.js"></script>
+{% endblock %}

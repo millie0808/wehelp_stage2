@@ -1,37 +1,49 @@
 from flask import *
+from models import *
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, joinedload
+# from sqlalchemy.exc import SQLAlchemyError
 from mysql.connector.pooling import MySQLConnectionPool
 import re
 import jwt
 import random
 import string
 
-app=Flask(__name__)
-app.config["JSON_AS_ASCII"]=False
-app.config["TEMPLATES_AUTO_RELOAD"]=True
-app.config["JSON_SORT_KEYS"] = False
 app = Flask(
     __name__,
     static_folder = "static",
     static_url_path = "/"
 )
+# 加載config文件
+app.config.from_object("config")
 
+# SQLAlchemy connection
+db.init_app(app)
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'] )
+Session = sessionmaker(bind=engine)
+
+# MySQL connection
 db_config = {
-    "host": "localhost",
-    "database": "taipei_day_trip",
-    "user": "root",
-    "password": "rootpass",
+    "host": app.config['DATABASE_HOST'],
+    "database": app.config['DATABASE_NAME'],
+    "user": app.config['DATABASE_USER'],
+    "password": app.config['DATABASE_PASSWORD'],
 }
-
 connection_pool = MySQLConnectionPool(
     pool_name = "my_connection_pool",
-    pool_size = 5,
+    pool_size = app.config['CONNECTION_POOL_SIZE'],
     **db_config
 )
-
 # MySQL Views: attraction_data
+
 
 # Global variables
 utf8 = {"Content-Type": "application/json; charset=utf-8"}
+JWT_SECRET_KEY = 'adiwnonrijf;oiwjfi'
+time_mapping = {
+    'morning': 2000,
+    'afternoon': 2500
+}
 
 # jwt 密鑰
 def generate_random_string(length):
@@ -40,7 +52,7 @@ def generate_random_string(length):
     # 使用隨機函數生成指定長度的隨機字符串
     random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string
-SECRET_KEY = generate_random_string(10)
+# JWT_SECRET_KEY = generate_random_string(10)
 
 # Functions
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, group_concat=False, rowcount=False):
@@ -165,18 +177,123 @@ def generate_jwt_token(user_data):
 		'name': user_data['name'],
 		'email': user_data['email']
 	}
-    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
+
+def get_token(auth_header):
+	if auth_header and auth_header.startswith('Bearer '):
+		token = auth_header.split(' ')[1]
+		return token
+
+def get_decoded_user_data():
+	authorization_header = request.headers.get('Authorization')
+	token = get_token(authorization_header)
+	decoded_payload = verify_jwt_token(token)
+	return decoded_payload
 
 def verify_jwt_token(token):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        return payload
-    except jwt.ExpiredSignatureError:
-        # Token已過期
-        return None
-    except jwt.InvalidTokenError:
-        # Token無效
-        return None
+	try:
+		payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
+		return payload
+	except jwt.ExpiredSignatureError:
+		# Token已過期
+		return None
+	except jwt.InvalidTokenError:
+		# Token無效
+		return None
+
+# def get_booking_data(user_id):
+# 	db_session = Session()
+# 	booking_data = db_session.query(Booking, Attraction, BookingTime, Image).\
+# 		outerjoin(Attraction, Booking.attn_id == Attraction.id).\
+# 		outerjoin(BookingTime, Booking.time_id == BookingTime.id).\
+# 		outerjoin(Image, Image.attn_id == Attraction.id).\
+# 		filter(Booking.user_id == user_id).first()
+# 	if booking_data != None:
+# 		booking, attraction, booking_time, image = booking_data
+# 		return_data = {
+# 			"attraction": {
+# 				"id": booking.attn_id,
+# 				"name": attraction.name,
+# 				"address": attraction.address,
+# 				"image": image.url
+# 				},
+# 			"date": booking.date.strftime('%Y-%m-%d'),
+# 			"time": booking_time.time,
+# 			"price": booking_time.price
+# 		}
+# 	else:
+# 		return_data = None
+# 	return return_data
+
+# def insert_into_booking(user_id, data):
+# 	db_session = Session()
+# 	# 刪除
+# 	old_booking = db_session.query(Booking).filter_by(user_id=user_id).first()
+# 	if old_booking:
+# 		db_session.delete(old_booking)
+# 	# 新增
+# 	time_id = time_mapping.get(data['time'], -1)
+# 	new_booking = Booking(attn_id=data['attractionID'], user_id=user_id, date=data['date'], time_id=time_id)
+# 	db_session.add(new_booking)
+# 	db_session.commit()
+
+def init_cart():
+    if 'carts' not in session:
+        session['carts'] = {}
+
+def get_cart(user_id):
+	init_cart()
+	if user_id in session['carts']:
+		db_session = Session()
+		attraction_data = db_session.query(Attraction.name, Attraction.address, Image.url).\
+			outerjoin(Image, Image.attn_id == Attraction.id).\
+			filter(Attraction.id == session['carts'][user_id]['attn_id']).first()
+		attn_name, attn_address, attn_image = attraction_data
+		booking_data = {
+			"attraction": {
+				"id": session['carts'][user_id]['attn_id'],
+				"name": attn_name,
+				"address": attn_address,
+				"image": attn_image
+			},
+			"date": session['carts'][user_id]['date'],
+			"time": session['carts'][user_id]['time'],
+			"price": time_mapping.get(session['carts'][user_id]['time'])
+		}
+	else:
+		booking_data = None
+	return booking_data
+
+def add_to_cart(user_id, data):
+	init_cart()
+	# trip_id = f"{data['attractionID']}-{data['date']}-{data['time']}"
+	if user_id not in session['carts']:
+		session['carts'][user_id] = {}
+	session['carts'][user_id] = {
+		'attn_id': data['attractionID'],
+		'date': data['date'],
+		'time': data['time']
+	}
+	session.modified = True
+	# if trip_id not in session['carts'][user_id]:
+	# 	session['carts'][user_id][trip_id] = {
+	# 		'attn_id': data['attractionID'],
+	# 		'date': data['date'],
+	# 		'time': data['time']
+	# 	}
+	# 	session.modified = True
+
+def remove_from_cart(user_id):
+	init_cart()
+	if user_id in session['carts']:
+		del session['carts'][user_id]
+		session.modified = True
+
+# def delete_booking(user_id):
+# 	db_session = Session()
+# 	booking = db_session.query(Booking).filter_by(user_id=user_id).first()
+# 	db_session.delete(booking)
+# 	db_session.commit()
 
 # Pages
 @app.route("/")
@@ -263,36 +380,71 @@ def api_user():
 	except:
 		return api_error("伺服器內部錯誤", 500)
 
-@app.route("/api/user/auth", methods=['PUT', 'GET'])
-def api_user_auth():
+@app.route("/api/user/auth", methods=['PUT'])
+def login():
 	try:
-		if request.method == 'PUT':
-			data = request.get_json()
-			email = data['email']
-			password = data['password']
-			if is_valid_email(email):
-				signin_result = check_signin(email, password)
-				if signin_result:
-					jwt_token = generate_jwt_token(signin_result)
-					return jsonify({"token": jwt_token})
-				else:
-					return api_error("登入失敗，帳號密碼錯誤", 400)
+		data = request.get_json()
+		email = data['email']
+		password = data['password']
+		if is_valid_email(email):
+			signin_result = check_signin(email, password)
+			if signin_result:
+				jwt_token = generate_jwt_token(signin_result)
+				return jsonify({"token": jwt_token})
 			else:
-				return api_error("登入失敗，email格式錯誤", 400)
-		if request.method == 'GET':
-			authorization_header = request.headers.get('Authorization')
-			if authorization_header and authorization_header.startswith('Bearer '):
-				token = authorization_header.split(' ')[1]
-			decoded_payload = verify_jwt_token(token)
-			if decoded_payload:
-				return jsonify({"data": decoded_payload})
-			else:
-				return jsonify(None)
+				return api_error("登入失敗，帳號密碼錯誤", 400)
+		else:
+			return api_error("登入失敗，email格式錯誤", 400)
 	except:
 		return api_error("伺服器內部錯誤", 500)
 
+@app.route("/api/user/auth", methods=['GET'])
+def check_authorization():
+	user_data = get_decoded_user_data()
+	if user_data:
+		return jsonify({"data": user_data})
+	else:
+		return jsonify(None)
+
+@app.route("/api/booking", methods=['GET'])
+def get_booking():
+	user_data = get_decoded_user_data()
+	if user_data:
+		user_id = str(user_data['id'])
+		# booking_data = get_booking_data(user_id)
+		booking_data = get_cart(user_id)
+		return jsonify({"data": booking_data})
+	else:
+		return api_error("未登入系統", 403)
 
 
+@app.route("/api/booking", methods=['POST'])
+def create_new_booking():
+	try:
+		user_data = get_decoded_user_data()
+		if user_data:
+			user_id = str(user_data['id'])
+			new_booking_data = request.get_json()
+			try:
+				add_to_cart(user_id, new_booking_data)
+				return jsonify({"ok": True})
+			except:
+				return api_error("建立失敗", 400)
+		else:
+			return api_error("未登入系統", 403)
+	except:
+		return api_error("伺服器內部錯誤", 500)
+
+@app.route("/api/booking", methods=['DELETE'])
+def delete_booking():
+	user_data = get_decoded_user_data()
+	if user_data:
+		user_id = str(user_data['id'])
+		# delete_booking(user_id)
+		remove_from_cart(user_id)
+		return jsonify({"ok": True})
+	else:
+		return api_error("未登入系統", 403)
 
 
 

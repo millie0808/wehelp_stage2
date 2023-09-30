@@ -1,0 +1,225 @@
+.separator_nav{
+    width: 100%;
+    height: 1px;
+    background-color: var(--secondary-color-gray-20);
+    flex-shrink: 0;
+}
+.headline{
+    width: 1000px;
+    height: 27px;
+    box-sizing: border-box;
+    padding: 6px 0px 5px 0px;
+    margin-top: 40px;
+    display: flex;
+    align-items: flex-start;
+    color: var(--secondary-color-gray-70);
+}
+.booking-existed{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.preview{
+    width: 100%;
+    height: auto;
+    max-height: 337px;
+    box-sizing: border-box;
+    padding: 40px 0 40px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.order{
+    width: 980px;
+    height: 200px;
+    flex-shrink: 0;
+    display: flex;
+    gap: 30px;
+    position: relative;
+}
+.order__img{
+    width: 250px;
+    height: 200px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+.order__info{
+    width: 700px;
+    height: 170px;
+    flex-shrink: 0;
+    display: grid;
+    grid-template-rows: 24px 20px 24px 10px 24px 10px 24px 10px 24px; 
+}
+.order__info_title{
+    color: var(--primary-color-cyan-70);
+    box-sizing: border-box;
+    padding: 5px 0;
+    display: flex;
+}
+.order__info_date, .order__info_time, .order__info_price, .order__info_address{
+    color: var(--secondary-color-gray-70);
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+.order__info_delete{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.order__info_delete img{
+    display: flex;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+.separator_main{
+    width: 1200px;
+    height: 1px;
+    background-color: var(--secondary-color-gray-20);
+    flex-shrink: 0;
+}
+.contact{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+}
+.contact__container{
+    width: 980px;
+    display: grid;
+    grid-template-rows: 24px 20px 38px 15px 38px 15px 38px 15px min-content;
+    color: var(--secondary-color-gray-70);
+}
+.contact__title, .contact__name, .contact__email, .contact__cellphone, .contact__reminder{
+    display: flex;
+    align-items: center;
+}
+input[name=booking-contact], input[name=booking-payment]{
+    box-sizing: border-box;
+    padding: 10px;
+    width: 200px;
+    height: 38px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color-gray-20);
+    background: var(--additional-color-white);
+}
+input[name=booking-contact]{
+    color: var(--additional-color-black);
+}
+input[name=booking-payment]{
+    color: var(--secondary-color-gray-50);
+}
+.payment{
+    width: 100%;
+    height: 268px;
+    box-sizing: border-box;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+}
+.payment__container{
+    width: 980px;
+    height: 188px;
+    display: grid;
+    grid-template-rows: 24px 20px 38px 15px 38px 15px 38px;
+    color: var(--secondary-color-gray-70);
+}
+.payment__title{
+    display: flex;
+    align-items: center;
+}
+.confirm{
+    width: 100%;
+    height: 180px;
+    box-sizing: border-box;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+}
+.confirm__container{
+    width: 980px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 22px;
+}
+.confirm__total-price{
+    height: 20px;
+    display: flex;
+    align-items: center;
+    color: var(--secondary-color-gray-70);
+    text-align: right;
+}
+.confirm__btn{
+    width: 173px;
+    height: 36px;
+    display: inline-flex;
+    padding: 10px 20px;
+    align-items: flex-start;
+    border-radius: 5px;
+    background: var(--primary-color-cyan-70);
+    color: var(--additional-color-white);
+}
+.no-booking{
+    width: 1000px;
+    height: 24px;
+    padding: 31px 0 40px 0;
+    color: var(--secondary-color-gray-70);
+}
+
+
+@media (max-width:1200px){
+    .headline{
+        width: 100%;
+        padding: 6px 10px 5px 10px;
+    }
+    .preview{
+        max-height: 557px;
+        padding: 0;
+    }
+    .order{
+        width: 100%;
+        height: auto;
+        box-sizing: border-box;
+        padding: 28px 10px 30px 10px;
+        flex-direction: column;
+        gap: 28px;
+    }
+    .order__img{
+        width: 100%;
+    }
+    .order__info{
+        width: 100%;
+        height: 200px;
+    }
+    .order__info_delete{
+        top: auto;
+        bottom: 30px;
+        right: 10px;
+    }
+    .separator_main{
+        width: calc(100% - 20px);
+        margin: 0 10px;
+    }
+    .contact__container, .payment__container{
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 10px;
+    }
+    .confirm{
+        padding: 40px 10px;
+    }
+    .no-booking{
+        width: 100%;
+        box-sizing: border-box;
+        padding-left: 10px;
+    }
+}

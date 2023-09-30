@@ -32,33 +32,35 @@
                 <div></div>
                 <span class="body_med align_center">以此景點為中心的一日行程，帶您探索城市角落故事</span>
                 <div></div>
-                <div class="section__profile-booking-date-container">
-                    <span class="body_bold align_center">選擇日期：</span>
-                    <div class="section__profile-booking-date-input-container">
-                        <input class="section__profile-booking-date-input body_med" type="date" name="" id="" />
+                <form id="start_booking">
+                    <div class="section__profile-booking-date-container">
+                        <span class="body_bold align_center">選擇日期：</span>
+                        <div class="section__profile-booking-date-input-container">
+                            <input class="section__profile-booking-date-input body_med" type="date" id="date" required />
+                        </div>
                     </div>
-                </div>
-                <div></div>
-                <div class="section__profile-booking-time-container">
-                    <span class="body_bold align_center">選擇時間：</span>
-                    <div class="time-radio-input-container">
-                        <input class="time-radio-input" type="radio" name="time" id="morning" />
-                        <span class="body_med">上半天</span>
+                    <div></div>
+                    <div class="section__profile-booking-time-container">
+                        <span class="body_bold align_center">選擇時間：</span>
+                        <div class="time-radio-input-container">
+                            <input class="time-radio-input" type="radio" name="time" id="morning" value="morning" required />
+                            <span class="body_med" id="morning-span">上半天</span>
+                        </div>
+                        <div class="time-radio-input-container">
+                            <input class="time-radio-input" type="radio" name="time" id="afternoon" value="afternoon" />
+                            <span class="body_med" >下半天</span>
+                        </div>
                     </div>
-                    <div class="time-radio-input-container">
-                        <input class="time-radio-input" type="radio" name="time" id="afternoon" />
-                        <span class="body_med">下半天</span>
+                    <div></div>
+                    <div class="section__profile-booking-price-container">
+                        <span class="body_bold">導覽費用：</span>
+                        <span class="price body_med"></span>
                     </div>
-                </div>
-                <div></div>
-                <div class="section__profile-booking-price-container">
-                    <span class="body_bold">導覽費用：</span>
-                    <span class="price body_med"></span>
-                </div>
-                <div></div>
-                <button class="section__profile-booking-btn">
-                    <span class="button_reg">開始預約行程</span>
-                </button>
+                    <div></div>
+                    <button class="section__profile-booking-btn" type="submit">
+                        <span class="button_reg">開始預約行程</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
