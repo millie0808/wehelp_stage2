@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block css_content %}
+<link rel="stylesheet" type="text/css" href="/css/thankyou.css">
+{% endblock %}
+{% block main_content %}
+    <div class="separator_nav"></div>
+    <div class="thankyou">
+        <span class="button_bold">行程預定成功</span>
+        <span class="button_bold">您的訂單編號如下</span>
+        <span class="button_reg" id="order-number"></span>
+        <span class="content_reg">請記住此編號，或到會員中心查詢歷史訂單</span>
+    </div>
+{% endblock %}
+{% block script_content %}
+    <script src="/js/thankyou.js"></script>
+{% endblock %}
