@@ -3,6 +3,7 @@ from models import db
 from api.attraction import attraction_bp
 from api.booking import booking_bp
 from api.user import user_bp
+from api.order import order_bp
 
 app = Flask(
     __name__,
@@ -19,6 +20,7 @@ db.init_app(app)
 app.register_blueprint(attraction_bp)
 app.register_blueprint(booking_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(order_bp)
 
 # Pages
 @app.route("/")
