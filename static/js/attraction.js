@@ -141,6 +141,10 @@ afternoonRadio.addEventListener("change", () => {
 
 // start booking Button
 const startBookingForm = document.querySelector("#start_booking");
+const timeMapping = {
+    'morning': 2000,
+    'afternoon': 2500
+};
 startBookingForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const selectedTimeRadio = document.querySelector('input[type="radio"][name="time"]:checked');
@@ -153,7 +157,8 @@ startBookingForm.addEventListener("submit", (event) => {
         body: JSON.stringify({
             "attractionID": Number(pathname.slice(12)),
             "date": dateInput.value,
-            "time": selectedTimeRadio.value
+            "time": selectedTimeRadio.value,
+            'price': timeMapping[selectedTimeRadio.value]
         })
     }).then(response => {
         if(response.status === 403){

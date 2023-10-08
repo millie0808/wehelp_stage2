@@ -1,7 +1,12 @@
 from flask import jsonify, session, request
 from sqlalchemy.orm import joinedload
+from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime
 import jwt
 import re
+import requests
+import json
+import random
 from models import *
 from config import *
 
@@ -36,24 +41,6 @@ def api_error(message, code):
 		"message": message
 	}), code, utf8
 
-def count_attraction_rows():
-	sql_query = """
-	SELECT count(*)
-	FROM attraction
-	"""
-	query_result = execute_query(sql_query, fetch_one=True)
-	num_of_rows = query_result["count(*)"]
-	return num_of_rows
-
-def select_attraction_by_id(attractionId):
-	sql_query = """
-	SELECT * 
-	FROM attraction_data
-	WHERE id = %s;
-	"""
-	query_result = execute_query(sql_query, (attractionId,), fetch_one=True, group_concat=True)
-	return query_result
-
 def handle_api_attractions(one_page, page, keyword):
 	if keyword:
 		sql_query = """
@@ -76,16 +63,14 @@ def handle_api_attractions(one_page, page, keyword):
 		return query_result
 
 def handle_api_mrts():
-    sql_query = """
-        SELECT mrt.name, COUNT(attraction.mrt_id) AS num_of_attractions
-		FROM mrt
-		LEFT JOIN attraction ON mrt.id = attraction.mrt_id
-		GROUP BY mrt.id
-		ORDER BY num_of_attractions DESC;
-		"""
-    query_result = execute_query(sql_query, fetch_all=True)
-    result = [station['name'] for station in query_result]
-    return result
+    db_session = Session()
+    mrts = db_session.query(Mrt.name)\
+        .outerjoin(Attraction, Mrt.id == Attraction.mrt_id)\
+        .group_by(Mrt.id)\
+        .order_by(func.count(Attraction.mrt_id).desc())\
+        .all()
+    mrt_names = [station.name for station in mrts]
+    return mrt_names
 
 def is_valid_email(email):
     email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
@@ -100,37 +85,17 @@ def check_signup(name, email, password):
         return True
     else:
         return False
-	# sql_query = """
-	# 	INSERT INTO user (name, email, password) 
-	# 	SELECT %s, %s, %s 
-	# 	FROM user 
-	# 	WHERE NOT EXISTS ( 
-	# 		SELECT 1 
-	# 		FROM user 
-	# 		WHERE email = %s
-	# 	) 
-	# 	LIMIT 1;
-	# 	"""
-	# affected_rows = execute_query(sql_query, (name, email, password, email), commit=True, rowcount=True)
-	# if affected_rows == 0:
-	# 	return False
-	# else:
-	# 	return True
 
 def check_signin(email, password):
-	sql_query = """
-		SELECT id, name, email
-		FROM user
-		WHERE email = %s AND password = %s;
-		"""
-	query_result = execute_query(sql_query, (email, password), fetch_one=True)
-	return query_result
+    db_session = Session()
+    user = db_session.query(User).filter_by(email=email, password=password).first()
+    return user
 
 def generate_jwt_token(user_data):
     payload = {
-		'id': user_data['id'],
-		'name': user_data['name'],
-		'email': user_data['email']
+		'id': user_data.id,
+		'name': user_data.name,
+		'email': user_data.email
 	}
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
 
@@ -156,97 +121,77 @@ def verify_jwt_token(token):
 		# Token無效
 		return None
 
-# def get_booking_data(user_id):
-# 	db_session = Session()
-# 	booking_data = db_session.query(Booking, Attraction, BookingTime, Image).\
-# 		outerjoin(Attraction, Booking.attn_id == Attraction.id).\
-# 		outerjoin(BookingTime, Booking.time_id == BookingTime.id).\
-# 		outerjoin(Image, Image.attn_id == Attraction.id).\
-# 		filter(Booking.user_id == user_id).first()
-# 	if booking_data != None:
-# 		booking, attraction, booking_time, image = booking_data
-# 		return_data = {
-# 			"attraction": {
-# 				"id": booking.attn_id,
-# 				"name": attraction.name,
-# 				"address": attraction.address,
-# 				"image": image.url
-# 				},
-# 			"date": booking.date.strftime('%Y-%m-%d'),
-# 			"time": booking_time.time,
-# 			"price": booking_time.price
-# 		}
-# 	else:
-# 		return_data = None
-# 	return return_data
-
-# def insert_into_booking(user_id, data):
-# 	db_session = Session()
-# 	# 刪除
-# 	old_booking = db_session.query(Booking).filter_by(user_id=user_id).first()
-# 	if old_booking:
-# 		db_session.delete(old_booking)
-# 	# 新增
-# 	time_id = time_mapping.get(data['time'], -1)
-# 	new_booking = Booking(attn_id=data['attractionID'], user_id=user_id, date=data['date'], time_id=time_id)
-# 	db_session.add(new_booking)
-# 	db_session.commit()
-
-def init_cart():
-    if 'carts' not in session:
-        session['carts'] = {}
-
 def get_cart(user_id):
-	init_cart()
-	if user_id in session['carts']:
-		db_session = Session()
-		attraction_data = db_session.query(Attraction.name, Attraction.address, Image.url).\
-			outerjoin(Image, Image.attn_id == Attraction.id).\
-			filter(Attraction.id == session['carts'][user_id]['attn_id']).first()
-		attn_name, attn_address, attn_image = attraction_data
-		booking_data = {
-			"attraction": {
-				"id": session['carts'][user_id]['attn_id'],
-				"name": attn_name,
-				"address": attn_address,
-				"image": attn_image
-			},
-			"date": session['carts'][user_id]['date'],
-			"time": session['carts'][user_id]['time'],
-			"price": time_mapping.get(session['carts'][user_id]['time'])
-		}
-	else:
-		booking_data = None
-	return booking_data
+    cart = Cart.get(user_id)
+    if cart:
+        booking_data = {
+            "attraction": {
+                "id": cart.attn_id,
+                "name": cart.attn_name,
+                "address": cart.attn_address,
+                "image": cart.attn_image
+            },
+            "date": cart.date,
+            "time": cart.time,
+            "price": cart.price
+        }
+    else:
+        booking_data = None
+    return booking_data
 
 def add_to_cart(user_id, data):
-    init_cart()
-	# trip_id = f"{data['attractionID']}-{data['date']}-{data['time']}"
-    if user_id not in session['carts']:
-        session['carts'][user_id] = {}
-    session['carts'][user_id] = {
-		'attn_id': data['attractionID'],
-		'date': data['date'],
-		'time': data['time']
-	}
-    print(session['carts'][user_id])
-    session.modified = True
-	# if trip_id not in session['carts'][user_id]:
-	# 	session['carts'][user_id][trip_id] = {
-	# 		'attn_id': data['attractionID'],
-	# 		'date': data['date'],
-	# 		'time': data['time']
-	# 	}
-	# 	session.modified = True
+    if Cart.get(user_id):
+        Cart.delete(user_id)
+    db_session = Session()
+    new_cart = Cart(
+        user_id = user_id,
+        attn_id = data['attractionID'],
+        date = data['date'],
+        time = data['time'],
+        price = data['price']
+    )
+    db_session.add(new_cart)
+    db_session.commit()
+    db_session.close()
 
 def remove_from_cart(user_id):
-	init_cart()
-	if user_id in session['carts']:
-		del session['carts'][user_id]
-		session.modified = True
+    Cart.delete(user_id)
 
-# def delete_booking(user_id):
-# 	db_session = Session()
-# 	booking = db_session.query(Booking).filter_by(user_id=user_id).first()
-# 	db_session.delete(booking)
-# 	db_session.commit()
+def to_tappay(data):
+    url = 'https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime'
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": "partner_oSofhGL6VSpC3tinjd98JJkvh4uKwj8QdBFHFVMKpcQyi8q9UPV3dC1S"
+    }
+    request_data = {
+        "prime": data['prime'],
+        "partner_key": "partner_oSofhGL6VSpC3tinjd98JJkvh4uKwj8QdBFHFVMKpcQyi8q9UPV3dC1S",
+        "merchant_id": 'millie000_ESUN',
+        "details": "tour",
+        "amount": data['order']['price'],
+        "cardholder": {
+            "phone_number": "+886923456789",
+            "name": data['order']['contact']['name'],
+            "email": data['order']['contact']['email'],
+        }
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(request_data))
+    response_data = response.json()
+    return response_data
+
+def generate_order_serial_number():
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    random_digits = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+    order_serial_number = f"{timestamp}{random_digits}"
+    return order_serial_number
+
+def create_new_order(user_id, data):
+    SN = generate_order_serial_number()
+    amount = data['order']['price']
+    contact =  data['order']['contact']
+    new_order = Orders.new(user_id, SN, amount, contact)
+    trip = data['order']['trip']
+    price = data['order']['price']
+    OrderItem.new(new_order.id, trip, price)
+    remove_from_cart(user_id)
+    return new_order

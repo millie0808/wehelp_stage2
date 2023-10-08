@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from utils.func import *
+from models import *
 
 attraction_bp = Blueprint('attraction', __name__)
 
@@ -39,15 +40,14 @@ def api_attractions():
 
 @attraction_bp.route("/api/attraction/<attractionId>")
 def api_attraction_attractionId(attractionId):
-	try:
-		attraction = select_attraction_by_id(attractionId)
-		if attraction:
-			attraction["images"] = attraction["images"].split(",")
-			return jsonify({"data": attraction}), utf8
-		else:
-			return api_error("景點編號不正確", 400)
-	except:
-		return api_error("伺服器內部錯誤", 500)
+    try:
+        attraction = Attraction.get(attractionId)
+        if attraction:
+            return jsonify({"data": attraction}), utf8
+        else:
+            return api_error("景點編號不正確", 400)
+    except:
+        return api_error("伺服器內部錯誤", 500)
 
 @attraction_bp.route("/api/mrts")
 def api_mrts():
