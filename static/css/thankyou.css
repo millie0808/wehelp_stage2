@@ -17,3 +17,6 @@
     background-color: var(--secondary-color-gray-20);
     flex-shrink: 0;
 }
+.member-link{
+    text-decoration: underline;
+}

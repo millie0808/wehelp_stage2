@@ -131,7 +131,14 @@ class Orders(db.Model):
     modified_at = db.Column(db.TIMESTAMP)
 
     @classmethod
-    def get(cls, user_id, SN):
+    def get(cls, user_id):
+        order = db.session.query(
+            cls.SN, cls.amount, cls.is_paid,
+        ).filter(cls.user_id == user_id).all()
+        return order
+
+    @classmethod
+    def get_by_SN(cls, user_id, SN):
         order = db.session.query(cls)\
         .filter((cls.user_id == user_id) & (cls.SN == SN)).first()
         return order

@@ -36,7 +36,7 @@ def get_order(orderNumber):
     user_data = get_decoded_user_data()
     if user_data:
         user_id = str(user_data['id'])
-        order = Orders.get(user_id, orderNumber)
+        order = Orders.get_by_SN(user_id, orderNumber)
         if order:
             order_item = OrderItem.get(order.id)
             return jsonify({
@@ -63,5 +63,16 @@ def get_order(orderNumber):
             })
         else:
             return api_error("訂單編號不正確", 400)
+    else:
+        return api_error("未登入系統", 403)
+
+@order_bp.route("/api/orders", methods=['GET'])
+def get_orders():
+    user_data = get_decoded_user_data()
+    if user_data:
+        user_id = str(user_data['id'])
+        order = Orders.get(user_id)
+        order_dict =  [{'SN': item[0], 'amount': item[1], 'status': item[2]} for item in order]
+        return jsonify({"data":order_dict})
     else:
         return api_error("未登入系統", 403)

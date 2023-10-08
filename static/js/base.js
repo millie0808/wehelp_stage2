@@ -11,14 +11,26 @@ async function checkAuthorization(){
     }).then((response) => {
         return response.json();
     }).then((authorizationResult) => {
+        const currentURL = window.location.pathname;
         if(authorizationResult){
-            signOutButton.classList.remove("none");
             GLOBAL_userdata = authorizationResult.data;
-            bookingButton.addEventListener("click", () => {
-                window.location.href = '/booking';
-            })
+            if(currentURL == '/member'){
+                // 登出系統
+                signOutButton.classList.remove("none");
+                bookingButton.addEventListener("click", () => {
+                    window.location.href = '/booking';
+                })
+            }
+            else{
+                // 會員中心
+                memberButton.classList.remove("none");
+                memberButton.addEventListener("click", () => {
+                    window.location.href = '/member';
+                })
+            }
         }
         else{
+            // 登入/註冊
             signInUpButton.classList.remove("none");
             bookingButton.addEventListener("click", () => {
                 popSignInUp();
@@ -27,6 +39,8 @@ async function checkAuthorization(){
     })
 }
 checkAuthorization();
+
+const memberButton = document.querySelector(".header__btn-member");
 
 // Header title
 const headerTitle = document.querySelector(".header__title");
