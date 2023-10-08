@@ -12,7 +12,10 @@
     <div class="booking-existed none">
         <div class="preview">
             <div class="order">
-                <img class="order__img" >
+                <div class="order__img-container">
+                    <div class="order-img-loading"></div>
+                    <img class="order__img none" >
+                </div>
                 <div class="order__info">
                     <div class="order__info_title body_bold">
                         <span>台北一日遊：</span>
@@ -45,63 +48,70 @@
             </div>
         </div>
         <div class="separator_main"></div>
-        <div class="contact">
-            <div class="contact__container">
-                <span class="contact__title button_bold">您的聯絡資訊</span>
-                <div></div>
-                <div class="contact__name body_med">
-                    <span>聯絡姓名：</span>
-                    <input type="text" name="booking-contact" id="contact-name">
-                </div>
-                <div></div>
-                <div class="contact__email body_med">
-                    <span>聯絡信箱：</span>
-                    <input type="email" name="booking-contact" id="contact-email">
-                </div>
-                <div></div>
-                <div class="contact__cellphone body_med">
-                    <span>手機號碼：</span>
-                    <input type="tel" name="booking-contact" id="">
-                </div>
-                <div></div>
-                <span class="contact__reminder content_bold">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</span>
-            </div>
-        </div>
-        <div class="separator_main"></div>
-        <div class="payment">
-            <div class="payment__container">
-                <span class="payment__title button_bold">信用卡付款資訊</span>
-                <div></div>
-                <div class="payment__card body_med">
-                    <span>卡片號碼：</span>
-                    <input type="text" name="booking-payment" id="" placeholder="**** **** **** ****">
-                </div>
-                <div></div>
-                <div class="payment__expired body_med">
-                    <span>過期時間：</span>
-                    <input type="text" name="booking-payment" id="" placeholder="MM/YY">
-                </div>
-                <div></div>
-                <div class="payment__cvv body_med">
-                    <span>驗證密碼：</span>
-                    <input type="text" name="booking-payment" id="" placeholder="CVV">
+        <form id="booking-form">
+            <div class="contact">
+                <div class="contact__container">
+                    <span class="contact__title button_bold">您的聯絡資訊</span>
+                    <div></div>
+                    <div class="contact__name body_med">
+                        <span>聯絡姓名：</span>
+                        <input type="text" class="booking-contact" id="contact-name" required>
+                    </div>
+                    <div></div>
+                    <div class="contact__email body_med">
+                        <span>聯絡信箱：</span>
+                        <input type="email" class="booking-contact" id="contact-email" required>
+                    </div>
+                    <div></div>
+                    <div class="contact__cellphone body_med">
+                        <span>手機號碼：</span>
+                        <input type="tel" class="booking-contact" id="contact-phone" pattern="^09\d{8}$" placeholder="09XXXXXXXX" required>
+                    </div>
+                    <div></div>
+                    <span class="contact__reminder content_bold">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</span>
                 </div>
             </div>
-        </div>
-        <div class="separator_main"></div>
-        <div class="confirm">
-            <div class="confirm__container">
-                <div class="confirm__total-price body_bold">
-                    <span>總價：</span>
-                    <span id="confirm-total-price"></span>
+            <div class="separator_main"></div>
+            <div class="payment">
+                <div class="payment__container">
+                    <span class="payment__title button_bold">信用卡付款資訊</span>
+                    <div></div>
+                    <div class="body_med tpfield__container">
+                        <span>卡片號碼：</span>
+                        <div class="booking-payment" id="card-number" ></div>
+                    </div>
+                    <div></div>
+                    <div class="body_med tpfield__container ">
+                        <span>過期時間：</span>
+                        <div class="booking-payment" id="card-expiration-date" ></div>
+                    </div>
+                    <div></div>
+                    <div class="body_med tpfield__container ">
+                        <span>驗證密碼：</span>
+                        <div class="booking-payment" id="card-ccv" ></div>
+                    </div>
                 </div>
-                <button class="confirm__btn button_reg">
-                    <span>確認訂購並付款</span>
-                </button>
             </div>
-        </div>
+            <div class="separator_main"></div>
+            <div class="confirm">
+                <div class="confirm__container">
+                    <div class="confirm__total-price body_bold">
+                        <span>總價：</span>
+                        <span id="confirm-total-price"></span>
+                    </div>
+                    <div class="confirm__btn-container">
+                        <div class="confirm-loading none"></div>
+                        <button class="confirm__btn button_reg" type="submit">
+                            <span>確認訂購並付款</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}
 {% block script_content %}
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
     <script src="/js/booking.js"></script>
 {% endblock %}
