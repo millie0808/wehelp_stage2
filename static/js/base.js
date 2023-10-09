@@ -14,12 +14,12 @@ async function checkAuthorization(){
         const currentURL = window.location.pathname;
         if(authorizationResult){
             GLOBAL_userdata = authorizationResult.data;
+            bookingButton.addEventListener("click", () => {
+                window.location.href = '/booking';
+            })
             if(currentURL == '/member'){
                 // 登出系統
                 signOutButton.classList.remove("none");
-                bookingButton.addEventListener("click", () => {
-                    window.location.href = '/booking';
-                })
             }
             else{
                 // 會員中心
