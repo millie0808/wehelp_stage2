@@ -13,7 +13,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URI)
 Session = sessionmaker(bind=engine)
 
 # JWT
-JWT_SECRET_KEY = 'adiwnonrijf;oiwjfi'
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
 # MySQL connection
 DATABASE_HOST = os.getenv("DATABASE_HOST")
