@@ -112,7 +112,7 @@ dialog::backdrop{
     color: var(--secondary-color-gray-70);
     white-space: nowrap; /* 文字不換行 */
 }
-.header__btn-logout{
+.header__btn-member, .header__btn-logout{
     width: auto; 
     max-width: 84px; 
     height: 34px;

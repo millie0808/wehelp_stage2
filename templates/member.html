@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block css_content %}
+<link rel="stylesheet" type="text/css" href="/css/member.css">
+{% endblock %}
+{% block main_content %}
+    <div class="separator_nav"></div>
+    <div class="headline">
+        <div class="button_bold">您好，</div>
+        <div class="button_bold" id="headline-username"></div>
+        <div class="button_bold">，您的訂單如下：</div>
+    </div>
+    <div class="orders">
+        <!-- <div class="order-order header1">1</div>
+        <div class="order__container button_reg">
+            <div class="order__img-container">
+                <div class="order-img-loading"></div>
+                <img class="order__img none" >
+            </div>
+            <div class="order__info-container">
+                <span>訂單編號：</span>
+                <span>狀態：</span>
+                <span>景點：</span>
+                <span>日期：</span>
+                <span>時間：</span>
+                <span>費用：</span>
+                <span>地點：</span>
+            </div>
+            <div class="order__btn-container">
+                <button class="pay-btn button_reg">繳費</button>
+                <button class="refund-btn button_reg">退費</button>
+            </div>
+        </div>
+        <div class="separator_order"></div>
+        -->
+    </div>
+
+{% endblock %}
+{% block script_content %}
+    <script src="/js/member.js"></script>
+{% endblock %}

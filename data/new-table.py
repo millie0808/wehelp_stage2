@@ -15,7 +15,7 @@ cursor.execute("USE taipei_day_trip")
 # CREATE TABLE user (
 #     id BIGINT AUTO_INCREMENT PRIMARY KEY,
 #     name VARCHAR(255) not null,
-#     email VARCHAR(255) not null,
+#     email VARCHAR(255) not null unique,
 #     password VARCHAR(255) not null,
 #     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null
 # );
@@ -28,37 +28,52 @@ cursor.execute("USE taipei_day_trip")
 # """
 # cursor.execute(default_user_query)
 
-create_booking_time_table_query = """
-CREATE TABLE booking_time (
+create_cart_table_query = """
+CREATE TABLE cart (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    time VARCHAR(255),
-    price INT
-);
-"""
-cursor.execute(create_booking_time_table_query)
-
-default_booking_time_query = """
-INSERT INTO booking_time (id, time, price)
-VALUES 
-    (1, 'morning', 2000),
-    (2, 'afternoon', 2500);
-"""
-cursor.execute(default_booking_time_query)
-
-create_booking_table_query = """
-CREATE TABLE booking (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    attn_id BIGINT not null,
     user_id BIGINT not null,
-    date DATE not null, 
-    time_id BIGINT not null,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
-    foreign key(attn_id) references attraction(id),
+    attn_id BIGINT not null,
+    date DATE not null,
+    time VARCHAR(20) CHECK (time IN ('morning', 'afternoon')) NOT NULL,
+    price BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW() not null,
     foreign key(user_id) references user(id),
-    foreign key(time_id) references booking_time(id)
+    foreign key(attn_id) references attraction(id)
 );
 """
-cursor.execute(create_booking_table_query)
+cursor.execute(create_cart_table_query)
+
+create_order_table_query = """
+CREATE TABLE orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    SN VARCHAR(255) not null unique,
+    user_id BIGINT not null,
+    amount BIGINT NOT NULL,
+    is_paid BOOLEAN NOT NULL DEFAULT false,
+    rec_trade_id VARCHAR(20),
+    contact_name VARCHAR(255) not null,
+    contact_email VARCHAR(255) not null,
+    contact_phone VARCHAR(255) not null,
+    created_at TIMESTAMP DEFAULT NOW() not null,
+    modified_at TIMESTAMP,
+    foreign key(user_id) references user(id)
+);
+"""
+cursor.execute(create_order_table_query)
+
+create_order_item_table_query = """
+CREATE TABLE order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT not null,
+    attn_id BIGINT not null,
+    date DATE not null,
+    time VARCHAR(20) CHECK (time IN ('morning', 'afternoon')) not null,
+    price BIGINT not null,
+    foreign key(order_id) references orders(id),
+    foreign key(attn_id) references attraction(id)
+);
+"""
+cursor.execute(create_order_item_table_query)
 
 
 connection.commit()
